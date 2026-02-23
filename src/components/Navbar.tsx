@@ -63,86 +63,88 @@ export default function Navbar() {
   const isLanding = location.pathname === '/'
 
   return (
-    <nav
-      className={[
-        'fixed top-0 left-0 w-full z-50 transition-all duration-300',
-        scrolled || mobileOpen || !isLanding
-          ? 'bg-slate-950 backdrop-blur-lg border-b border-white/5 shadow-lg shadow-black/10'
-          : 'bg-transparent',
-      ].join(' ')}
-    >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-2 group">
-          <span className="text-xl md:text-2xl font-black uppercase tracking-widest">
-            <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors">
-              Tipper&apos;s
-            </span>{' '}
-            <span className="text-white">Bill of Rights</span>
-          </span>
-        </Link>
+    <>
+      <nav
+        className={[
+          'fixed top-0 left-0 w-full z-50 transition-all duration-300',
+          scrolled || mobileOpen || !isLanding
+            ? 'bg-slate-950 backdrop-blur-lg border-b border-white/5 shadow-lg shadow-black/10'
+            : 'bg-transparent',
+        ].join(' ')}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+          <Link to="/" className="flex items-center gap-2 group">
+            <span className="text-xl md:text-2xl font-black uppercase tracking-widest">
+              <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors">
+                Tipper&apos;s
+              </span>{' '}
+              <span className="text-white">Bill of Rights</span>
+            </span>
+          </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-1">
-          {navLinks.map((link) => (
+          {/* Desktop nav */}
+          <div className="hidden lg:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={[
+                  'relative px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+                  isActive(link.to)
+                    ? 'text-emerald-400'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5',
+                ].join(' ')}
+              >
+                {link.label}
+                {isActive(link.to) && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute bottom-0 left-2 right-2 h-0.5 bg-emerald-400 rounded-full"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </Link>
+            ))}
             <Link
-              key={link.to}
-              to={link.to}
+              to="/certification"
               className={[
-                'relative px-4 py-2 text-sm font-medium rounded-lg transition-colors',
-                isActive(link.to)
-                  ? 'text-emerald-400'
-                  : 'text-slate-300 hover:text-white hover:bg-white/5',
+                'ml-3 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200',
+                'bg-emerald-500 text-white hover:bg-emerald-400',
+                'shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30',
               ].join(' ')}
             >
-              {link.label}
-              {isActive(link.to) && (
-                <motion.div
-                  layoutId="activeNav"
-                  className="absolute bottom-0 left-2 right-2 h-0.5 bg-emerald-400 rounded-full"
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                />
-              )}
+              Get Certified
             </Link>
-          ))}
-          <Link
-            to="/certification"
-            className={[
-              'ml-3 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200',
-              'bg-emerald-500 text-white hover:bg-emerald-400',
-              'shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30',
-            ].join(' ')}
-          >
-            Get Certified
-          </Link>
-        </div>
-
-        {/* Mobile hamburger */}
-        <button
-          className="lg:hidden relative w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm"
-          onClick={() => setMobileOpen((o) => !o)}
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-        >
-          <div className="relative w-6 h-5 flex flex-col justify-between">
-            <motion.span
-              animate={mobileOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              className="block w-full h-0.5 bg-white origin-center"
-              transition={{ duration: 0.2 }}
-            />
-            <motion.span
-              animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block w-full h-0.5 bg-white"
-              transition={{ duration: 0.15 }}
-            />
-            <motion.span
-              animate={mobileOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              className="block w-full h-0.5 bg-white origin-center"
-              transition={{ duration: 0.2 }}
-            />
           </div>
-        </button>
-      </div>
 
-      {/* Mobile drawer */}
+          {/* Mobile hamburger */}
+          <button
+            className="lg:hidden relative z-[1000] w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm"
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          >
+            <div className="relative w-6 h-5 flex flex-col justify-between">
+              <motion.span
+                animate={mobileOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+                className="block w-full h-0.5 bg-white origin-center"
+                transition={{ duration: 0.2 }}
+              />
+              <motion.span
+                animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
+                className="block w-full h-0.5 bg-white"
+                transition={{ duration: 0.15 }}
+              />
+              <motion.span
+                animate={mobileOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+                className="block w-full h-0.5 bg-white origin-center"
+                transition={{ duration: 0.2 }}
+              />
+            </div>
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile drawer — outside nav to avoid z-index stacking context */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -151,7 +153,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-40 lg:hidden"
+              className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[998] lg:hidden"
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
@@ -160,7 +162,7 @@ export default function Navbar() {
               animate="open"
               exit="closed"
               className={[
-                'fixed top-0 right-0 h-full w-[280px] z-50 lg:hidden',
+                'fixed top-0 right-0 h-full w-[280px] z-[999] lg:hidden',
                 'bg-slate-950 border-l border-white/10',
                 'flex flex-col pt-20 px-6',
               ].join(' ')}
@@ -197,6 +199,6 @@ export default function Navbar() {
           </>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   )
 }
