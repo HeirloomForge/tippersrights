@@ -20,6 +20,12 @@ const CORS_HEADERS_BASE = {
   'Access-Control-Max-Age': '86400',
 };
 
+// Applied to every /api response — prevent MIME sniffing and framing attacks
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+};
+
 function getCorsOriginHeader(request: Request): Record<string, string> {
   const origin = request.headers.get('Origin') ?? '';
   if (ALLOWED_ORIGINS.has(origin)) {
@@ -38,14 +44,14 @@ export const onRequest: PagesFunction<Env>[] = [
     if (request.method === 'OPTIONS') {
       return new Response(null, {
         status: 204,
-        headers: { ...corsOrigin, ...CORS_HEADERS_BASE },
+        headers: { ...corsOrigin, ...CORS_HEADERS_BASE, ...SECURITY_HEADERS },
       });
     }
 
-    // Pass through to the actual handler and attach CORS headers to response
+    // Pass through to the actual handler and attach CORS + security headers to response
     const response = await next();
     const newHeaders = new Headers(response.headers);
-    Object.entries({ ...corsOrigin, ...CORS_HEADERS_BASE }).forEach(
+    Object.entries({ ...corsOrigin, ...CORS_HEADERS_BASE, ...SECURITY_HEADERS }).forEach(
       ([key, value]) => newHeaders.set(key, value)
     );
 
