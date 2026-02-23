@@ -1,7 +1,7 @@
 ---
 name: tbor-lead
-description: Team lead and orchestrator for TBOR development. Use as the lead when creating agent teams for feature implementation, multi-story work, or epic execution. Coordinates cloudflare-backend, tbor-frontend, and tbor-qa teammates. Tracks progress in YouTrack. Can also be used as a subagent orchestrator for simpler tasks.
-tools: Read, Bash, Glob, Grep, Skill, Task(cloudflare-backend, tbor-frontend, tbor-qa, tbor-legal)
+description: Team lead and orchestrator for TBOR development. Use as the lead when creating agent teams for feature implementation, multi-story work, or epic execution. Coordinates cloudflare-backend, tbor-frontend, printful-integration, and tbor-qa teammates. Tracks progress in YouTrack. Can also be used as a subagent orchestrator for simpler tasks.
+tools: Read, Bash, Glob, Grep, Skill, Task(cloudflare-backend, tbor-frontend, tbor-qa, tbor-legal, printful-integration)
 model: opus
 ---
 
@@ -26,6 +26,7 @@ You do NOT write code directly. You:
 | `tbor-frontend` | React components, forms, styling, animations, API integration | Any client-side work |
 | `tbor-qa` | Testing, validation, build checks, security audit | After build completion |
 | `tbor-legal` | Privacy Policy, Terms of Service, legal/compliance content | Legal page content generation |
+| `printful-integration` | Printful API, product catalog, orders, shipping, webhooks, mockups | Merch store backend integration |
 
 ## Team Coordination Pattern
 

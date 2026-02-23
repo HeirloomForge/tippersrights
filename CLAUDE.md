@@ -196,6 +196,7 @@ Custom agents are defined in `.claude/agents/`. Agent teams are enabled globally
 | `tbor-frontend` | Sonnet | Frontend: React components, form wiring, mock→API migration, Tailwind, Framer Motion |
 | `tbor-qa` | Sonnet | QA: Build validation, API testing, security audit, mobile check, YouTrack state transitions |
 | `tbor-legal` | Opus | Legal content: Privacy Policy, Terms of Service, compliance. Writes legally sound content in TBOR's satirical tone. |
+| `printful-integration` | Sonnet | Printful API: Product catalog sync, order creation, shipping rates, webhooks, mockup generation. Merch store backend. |
 
 ### Agent Teams vs. Subagents
 
