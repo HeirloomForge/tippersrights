@@ -1,11 +1,12 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import ScrollReveal from '../components/shared/ScrollReveal'
 import SectionHeading from '../components/shared/SectionHeading'
 import TestimonialGrid from '../components/testimonials/TestimonialGrid'
 import SubmissionForm from '../components/testimonials/SubmissionForm'
-import { mockTestimonials } from '../data/mockTestimonials'
+import { supabase } from '../lib/supabase'
+import { mockTestimonials, type Testimonial } from '../data/mockTestimonials'
 
-function computeStats(testimonials: typeof mockTestimonials) {
+function computeStats(testimonials: Testimonial[]) {
   const count = testimonials.length
 
   const tipNumbers = testimonials
@@ -28,7 +29,30 @@ function computeStats(testimonials: typeof mockTestimonials) {
 }
 
 export default function HallOfAbsurdity() {
-  const stats = useMemo(() => computeStats(mockTestimonials), [])
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(mockTestimonials)
+
+  useEffect(() => {
+    supabase
+      .from('testimonials')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const live: Testimonial[] = data.map((row) => ({
+            id: row.id,
+            story: row.story,
+            category: row.category,
+            tipRequested: row.tip_requested,
+            location: row.location ?? '',
+            upvotes: row.upvotes ?? 0,
+            date: row.created_at?.slice(0, 10) ?? '',
+          }))
+          setTestimonials([...live, ...mockTestimonials])
+        }
+      })
+  }, [])
+
+  const stats = useMemo(() => computeStats(testimonials), [testimonials])
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -61,7 +85,7 @@ export default function HallOfAbsurdity() {
       {/* Testimonial grid */}
       <section className="px-6 pb-20">
         <div className="max-w-6xl mx-auto">
-          <TestimonialGrid testimonials={mockTestimonials} />
+          <TestimonialGrid testimonials={testimonials} />
         </div>
       </section>
 

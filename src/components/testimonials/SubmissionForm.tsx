@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { supabase } from '../../lib/supabase'
 import GlowCard from '../shared/GlowCard'
 import MagneticButton from '../shared/MagneticButton'
 
@@ -88,8 +89,20 @@ export default function SubmissionForm() {
     return Object.keys(next).length === 0
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!validate()) return
+
+    const { error } = await supabase.from('testimonials').insert({
+      story: form.story.trim(),
+      category: form.category,
+      tip_requested: form.tipAmount.trim(),
+      location: form.location.trim(),
+    })
+
+    if (error) {
+      setErrors({ story: 'Something went wrong. Please try again.' })
+      return
+    }
 
     setParticles(generateParticles())
     setSubmitted(true)
