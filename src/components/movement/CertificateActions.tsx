@@ -9,25 +9,36 @@ interface CertificateActionsProps {
 const SHARE_TEXT = "I signed the Tipper's Bill of Rights. Join the movement. #TippersBillOfRights"
 const SHARE_URL = 'https://tippersbillofrights.com/movement'
 
+const socialPlatforms = [
+  {
+    name: 'X',
+    icon: '𝕏',
+    getUrl: (text: string, url: string) =>
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+  },
+  {
+    name: 'Facebook',
+    icon: 'f',
+    getUrl: (_text: string, url: string) =>
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+  },
+  {
+    name: 'Reddit',
+    icon: 'r',
+    getUrl: (text: string, url: string) =>
+      `https://reddit.com/submit?title=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+  },
+  {
+    name: 'LinkedIn',
+    icon: 'in',
+    getUrl: (_text: string, url: string) =>
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+  },
+]
+
 export default function CertificateActions({ certificateId }: CertificateActionsProps) {
   const [downloading, setDownloading] = useState(false)
   const [copied, setCopied] = useState(false)
-
-  async function getCertificateImage(): Promise<Blob | null> {
-    const node = document.getElementById('writ-of-ratification')
-    if (!node) return null
-
-    try {
-      const dataUrl = await toPng(node, {
-        pixelRatio: 2,
-        backgroundColor: '#1e1b14',
-      })
-      const response = await fetch(dataUrl)
-      return await response.blob()
-    } catch {
-      return null
-    }
-  }
 
   async function handleDownload() {
     setDownloading(true)
@@ -51,54 +62,56 @@ export default function CertificateActions({ certificateId }: CertificateActions
     }
   }
 
-  async function handleShare() {
-    // Try native Web Share API (mobile)
-    if (navigator.share) {
-      try {
-        const blob = await getCertificateImage()
-        if (blob) {
-          const file = new File([blob], `${certificateId}.png`, { type: 'image/png' })
-          await navigator.share({
-            title: "Tipper's Bill of Rights",
-            text: SHARE_TEXT,
-            url: SHARE_URL,
-            files: [file],
-          })
-          return
-        }
-      } catch {
-        // User cancelled or share failed — fall through to clipboard
-      }
-    }
-
-    // Fallback: copy share text to clipboard
-    try {
-      await navigator.clipboard.writeText(`${SHARE_TEXT}\n${SHARE_URL}`)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // Last resort — ignore
-    }
+  function handleCopyLink() {
+    navigator.clipboard.writeText(`${SHARE_TEXT}\n${SHARE_URL}`)
+      .then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+      .catch(() => {})
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-      <MagneticButton
-        variant="primary"
-        size="sm"
-        onClick={handleDownload}
-        disabled={downloading}
-      >
-        {downloading ? 'Generating...' : 'Download Certificate'}
-      </MagneticButton>
+    <div className="mt-6 space-y-4">
+      {/* Download */}
+      <div className="flex justify-center">
+        <MagneticButton
+          variant="primary"
+          size="sm"
+          onClick={handleDownload}
+          disabled={downloading}
+        >
+          {downloading ? 'Generating...' : 'Download Certificate'}
+        </MagneticButton>
+      </div>
 
-      <MagneticButton
-        variant="outline"
-        size="sm"
-        onClick={handleShare}
-      >
-        {copied ? 'Copied!' : 'Share'}
-      </MagneticButton>
+      {/* Share */}
+      <div className="flex flex-col items-center gap-2">
+        <p className="text-xs uppercase tracking-widest text-slate-500">
+          Share the movement
+        </p>
+        <div className="flex items-center gap-2">
+          {socialPlatforms.map((platform) => (
+            <a
+              key={platform.name}
+              href={platform.getUrl(SHARE_TEXT, SHARE_URL)}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`Share on ${platform.name}`}
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-800 text-slate-400 text-xs font-bold hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors"
+            >
+              {platform.icon}
+            </a>
+          ))}
+          <button
+            onClick={handleCopyLink}
+            title="Copy link"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-800 text-slate-400 text-xs font-bold hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors"
+          >
+            {copied ? '✓' : '🔗'}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
