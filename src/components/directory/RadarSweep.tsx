@@ -16,7 +16,7 @@ export default function RadarSweep() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950"
+          className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950"
         >
           {/* Grid lines */}
           <div className="absolute inset-0 opacity-20">

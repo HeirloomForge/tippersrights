@@ -58,13 +58,14 @@ export default function Navbar() {
   }, [mobileOpen])
 
   const isActive = (path: string) => location.pathname === path
+  const isLanding = location.pathname === '/'
 
   return (
     <nav
       className={[
         'fixed top-0 left-0 w-full z-50 transition-all duration-300',
-        scrolled
-          ? 'bg-slate-950/80 backdrop-blur-lg border-b border-white/5 shadow-lg shadow-black/10'
+        scrolled || mobileOpen || !isLanding
+          ? 'bg-slate-950/95 backdrop-blur-lg border-b border-white/5 shadow-lg shadow-black/10'
           : 'bg-transparent',
       ].join(' ')}
     >
@@ -148,7 +149,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-40 lg:hidden"
               onClick={() => setMobileOpen(false)}
             />
             <motion.div

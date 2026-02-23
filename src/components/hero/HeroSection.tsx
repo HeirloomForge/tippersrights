@@ -205,13 +205,14 @@ export default function HeroSection() {
           >
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-[0.85] tracking-tight">
               THE{' '}
-              <span className="text-emerald-400 block mt-2">FRICTIONLESS</span>{' '}
-              BASELINE.
+              <span className="text-emerald-400 block mt-2">GUILT</span>{' '}
+              STOPS HERE.
             </h1>
             <div className="h-1 w-24 bg-emerald-500 mb-8 mt-6 mx-auto lg:mx-0" />
             <p className="text-xl md:text-2xl text-slate-300 font-serif italic max-w-lg leading-relaxed mb-10 mx-auto lg:mx-0">
-              Processing a transaction warrants zero tip. Expert consultation
-              warrants a premium. End the flipped iPad herd mentality.
+              Their boss should pay them. You&rsquo;re not their payroll. That
+              iPad spinning toward you isn&rsquo;t asking for generosity &mdash;
+              it&rsquo;s a guilt machine. We&rsquo;re unplugging it.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -294,10 +295,10 @@ export default function HeroSection() {
               title="Above & Beyond"
               icon="&#127942;"
               items={[
-                'Sommelier curating a wine pairing',
-                'Personal stylist pulling a full look',
-                'Barber giving a precision fade & hot towel',
-                'Concierge planning your entire itinerary',
+                'A bartender making small samples to help you discover your perfect drink',
+                'A server who learns your allergies and personally coordinates with the kitchen',
+                'A barista who walks you through single-origin options and dials in a custom pour',
+                'A stylist who stays late to rework your cut until you\u2019re genuinely happy',
               ]}
             />
           </div>
