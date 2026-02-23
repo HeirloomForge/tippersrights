@@ -222,10 +222,10 @@ export default function Privacy() {
             <p>
               To exercise any of these rights, send word to{' '}
               <a
-                href="mailto:dave@tippersbillofrights.com"
+                href="mailto:info@tippersbillofrights.com"
                 className="text-emerald-400 hover:text-emerald-300 underline"
               >
-                dave@tippersbillofrights.com
+                info@tippersbillofrights.com
               </a>
               .
             </p>
@@ -269,10 +269,10 @@ export default function Privacy() {
             </p>
             <p className="mt-4">
               <a
-                href="mailto:dave@tippersbillofrights.com"
+                href="mailto:info@tippersbillofrights.com"
                 className="text-emerald-400 hover:text-emerald-300 underline text-lg"
               >
-                dave@tippersbillofrights.com
+                info@tippersbillofrights.com
               </a>
             </p>
           </PolicySection>

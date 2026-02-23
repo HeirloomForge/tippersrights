@@ -8,14 +8,14 @@ import MagneticButton from '../components/shared/MagneticButton'
 const contactChannels = [
   {
     title: 'General Inquiries',
-    description: 'Media requests, partnership proposals, questions about the movement, or just want to say hello.',
-    email: 'dave@tippersbillofrights.com',
+    description: 'Partnership proposals, questions about the movement, or just want to say hello.',
+    email: 'info@tippersbillofrights.com',
     glowColor: 'emerald' as const,
   },
   {
     title: 'Support',
     description: 'Issues with certification, petition questions, merchandise orders, or technical problems.',
-    email: 'dave@tippersbillofrights.com',
+    email: 'support@tippersbillofrights.com',
     glowColor: 'blue' as const,
   },
   {
