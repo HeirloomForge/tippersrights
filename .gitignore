@@ -21,6 +21,10 @@ dist-ssr
 # MCP config (contains auth tokens)
 .mcp.json
 
+# Cloudflare / Wrangler
+.wrangler/
+.dev.vars
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
