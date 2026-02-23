@@ -15,7 +15,7 @@ const categories: { label: string; value: Category }[] = [
 ]
 
 interface ProductGridProps {
-  onAddToCart: (product: Product) => void
+  onAddToCart: (product: Product, size?: string) => void
 }
 
 export default function ProductGrid({ onAddToCart }: ProductGridProps) {

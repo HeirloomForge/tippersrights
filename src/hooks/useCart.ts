@@ -4,37 +4,70 @@ import type { Product } from '../data/mockProducts'
 export interface CartItem {
   product: Product
   quantity: number
+  size?: string
 }
 
 export interface CartActions {
   cart: CartItem[]
   totalItems: number
   totalPrice: number
-  addItem: (product: Product) => void
-  removeItem: (productId: string) => void
+  addItem: (product: Product, size?: string) => void
+  removeItem: (productId: string, size?: string) => void
+  updateQuantity: (productId: string, quantity: number, size?: string) => void
   clearCart: () => void
+}
+
+/** Unique key for a cart item — includes size for apparel variants */
+function cartKey(productId: string, size?: string): string {
+  return size ? `${productId}:${size}` : productId
 }
 
 export default function useCart(): CartActions {
   const [cart, setCart] = useState<CartItem[]>([])
 
-  const addItem = useCallback((product: Product) => {
+  const addItem = useCallback((product: Product, size?: string) => {
     setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id)
+      const key = cartKey(product.id, size)
+      const existing = prev.find(
+        (item) => cartKey(item.product.id, item.size) === key
+      )
       if (existing) {
         return prev.map((item) =>
-          item.product.id === product.id
+          cartKey(item.product.id, item.size) === key
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
       }
-      return [...prev, { product, quantity: 1 }]
+      return [...prev, { product, quantity: 1, size }]
     })
   }, [])
 
-  const removeItem = useCallback((productId: string) => {
-    setCart((prev) => prev.filter((item) => item.product.id !== productId))
+  const removeItem = useCallback((productId: string, size?: string) => {
+    const key = cartKey(productId, size)
+    setCart((prev) =>
+      prev.filter((item) => cartKey(item.product.id, item.size) !== key)
+    )
   }, [])
+
+  const updateQuantity = useCallback(
+    (productId: string, quantity: number, size?: string) => {
+      const key = cartKey(productId, size)
+      if (quantity <= 0) {
+        setCart((prev) =>
+          prev.filter((item) => cartKey(item.product.id, item.size) !== key)
+        )
+        return
+      }
+      setCart((prev) =>
+        prev.map((item) =>
+          cartKey(item.product.id, item.size) === key
+            ? { ...item, quantity }
+            : item
+        )
+      )
+    },
+    []
+  )
 
   const clearCart = useCallback(() => {
     setCart([])
@@ -51,5 +84,5 @@ export default function useCart(): CartActions {
     [cart]
   )
 
-  return { cart, totalItems, totalPrice, addItem, removeItem, clearCart }
+  return { cart, totalItems, totalPrice, addItem, removeItem, updateQuantity, clearCart }
 }

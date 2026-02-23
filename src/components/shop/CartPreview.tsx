@@ -9,6 +9,47 @@ interface CartPreviewProps {
 
 export default function CartPreview({ cart }: CartPreviewProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleCheckout() {
+    if (cart.totalItems === 0) return
+    setIsLoading(true)
+    setError(null)
+
+    const items = cart.cart.map((item) => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+      ...(item.size ? { size: item.size } : {}),
+    }))
+
+    try {
+      const response = await fetch('/api/shop/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Checkout failed')
+      }
+
+      // Redirect to Stripe hosted checkout
+      if (data.data?.checkoutUrl) {
+        cart.clearCart()
+        window.location.href = data.data.checkoutUrl
+      } else {
+        throw new Error('No checkout URL returned')
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong'
+      setError(message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
@@ -27,7 +68,7 @@ export default function CartPreview({ cart }: CartPreviewProps) {
             <div className="max-h-60 overflow-y-auto space-y-3 pr-1">
               {cart.cart.map((item) => (
                 <div
-                  key={item.product.id}
+                  key={`${item.product.id}:${item.size || ''}`}
                   className="flex items-center justify-between gap-3"
                 >
                   <div className="flex-1 min-w-0">
@@ -35,12 +76,13 @@ export default function CartPreview({ cart }: CartPreviewProps) {
                       {item.product.name}
                     </p>
                     <p className="text-slate-400 text-xs">
+                      {item.size && <span className="text-emerald-400">{item.size} &middot; </span>}
                       Qty: {item.quantity} &times; $
                       {item.product.price.toFixed(2)}
                     </p>
                   </div>
                   <button
-                    onClick={() => cart.removeItem(item.product.id)}
+                    onClick={() => cart.removeItem(item.product.id, item.size)}
                     className="text-slate-500 hover:text-red-400 transition-colors text-sm shrink-0"
                   >
                     Remove
@@ -57,8 +99,27 @@ export default function CartPreview({ cart }: CartPreviewProps) {
                 </span>
               </div>
 
-              <MagneticButton variant="primary" size="sm" className="w-full">
-                Checkout (Mock)
+              {/* Error message */}
+              {error && (
+                <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <p className="text-red-400 text-xs">{error}</p>
+                  <button
+                    onClick={handleCheckout}
+                    className="text-red-300 text-xs underline mt-1"
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+
+              <MagneticButton
+                variant="primary"
+                size="sm"
+                className="w-full"
+                onClick={handleCheckout}
+                disabled={isLoading || cart.totalItems === 0}
+              >
+                {isLoading ? 'Processing...' : 'Checkout'}
               </MagneticButton>
 
               <button
