@@ -92,6 +92,11 @@ export default function SubmissionForm() {
   async function handleSubmit() {
     if (!validate()) return
 
+    if (!supabase) {
+      setErrors({ story: 'Submissions are not available yet. Check back soon!' })
+      return
+    }
+
     const { error } = await supabase.from('testimonials').insert({
       story: form.story.trim(),
       category: form.category,

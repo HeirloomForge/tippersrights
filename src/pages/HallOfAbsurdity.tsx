@@ -32,6 +32,7 @@ export default function HallOfAbsurdity() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(mockTestimonials)
 
   useEffect(() => {
+    if (!supabase) return
     supabase
       .from('testimonials')
       .select('*')
