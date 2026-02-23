@@ -1,19 +1,37 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import StatCounter from '../shared/StatCounter'
 
-const BASE_COUNT = 1_247_893
-const INCREMENT_INTERVAL_MS = 3_200
+const POLL_INTERVAL_MS = 30_000 // refresh every 30s
+const FALLBACK_COUNT = 0 // show 0 if API unreachable (no fake numbers)
 
 export default function LiveCounter() {
-  const [count, setCount] = useState(BASE_COUNT)
+  const [count, setCount] = useState<number | null>(null)
+  const [loaded, setLoaded] = useState(false)
+
+  const fetchCount = useCallback(async () => {
+    try {
+      const res = await fetch('/api/petition/count')
+      if (!res.ok) return
+      const json = await res.json()
+      setCount(json.data?.count ?? FALLBACK_COUNT)
+      setLoaded(true)
+    } catch {
+      // API unreachable — keep current count or show fallback
+      if (!loaded) {
+        setCount(FALLBACK_COUNT)
+        setLoaded(true)
+      }
+    }
+  }, [loaded])
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setCount((prev) => prev + Math.floor(Math.random() * 3) + 1)
-    }, INCREMENT_INTERVAL_MS)
+    fetchCount()
+    const id = setInterval(fetchCount, POLL_INTERVAL_MS)
     return () => clearInterval(id)
-  }, [])
+  }, [fetchCount])
+
+  const displayCount = count ?? FALLBACK_COUNT
 
   return (
     <div className="text-center">
@@ -22,14 +40,16 @@ export default function LiveCounter() {
         transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
       >
         <StatCounter
-          value={count}
+          value={displayCount}
           className="text-6xl sm:text-7xl md:text-8xl font-black text-white"
           duration={1.5}
         />
       </motion.div>
 
       <p className="mt-4 text-lg md:text-xl text-slate-400 tracking-wide">
-        guilt-free transactions and counting
+        {displayCount === 0
+          ? 'be the first to sign the petition'
+          : 'guilt-free transactions and counting'}
       </p>
 
       <div className="mt-6 flex justify-center gap-3">

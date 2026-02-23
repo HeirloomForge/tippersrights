@@ -1,23 +1,92 @@
 import { useState, type FormEvent } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import SectionHeading from '../shared/SectionHeading'
 import GlowCard from '../shared/GlowCard'
 import MagneticButton from '../shared/MagneticButton'
 import StatCounter from '../shared/StatCounter'
 import ScrollReveal from '../shared/ScrollReveal'
+import { US_STATES } from '../../data/usStates'
+
+interface PetitionFormData {
+  firstName: string
+  lastName: string
+  email: string
+  city: string
+  state: string
+  zipCode: string
+}
+
+interface PetitionSuccess {
+  certificateId: string
+  signerName: string
+  signedAt: string
+  totalSigners: number
+}
+
+const initialForm: PetitionFormData = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  city: '',
+  state: '',
+  zipCode: '',
+}
+
+const inputClasses =
+  'w-full px-4 py-3 rounded-lg bg-slate-800/80 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-colors'
 
 export default function JoinMovement() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    stateZip: '',
-  })
-  const [submitted, setSubmitted] = useState(false)
+  const [formData, setFormData] = useState<PetitionFormData>(initialForm)
+  const [submitting, setSubmitting] = useState(false)
+  const [success, setSuccess] = useState<PetitionSuccess | null>(null)
+  const [error, setError] = useState('')
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    // Wave 2 will wire this to POST /api/petition/sign
-    setSubmitted(true)
+    setError('')
+    setSubmitting(true)
+
+    try {
+      const response = await fetch('/api/petition/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          email: formData.email.trim() || undefined,
+          city: formData.city.trim(),
+          state: formData.state,
+          zipCode: formData.zipCode.trim(),
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          setError('This email has already signed the petition.')
+        } else if (response.status === 429) {
+          setError('Too many requests. Please try again later.')
+        } else if (result.details) {
+          const firstError = Object.values(result.details)[0]
+          setError(typeof firstError === 'string' ? firstError : 'Please check your input and try again.')
+        } else {
+          setError(result.error || 'Something went wrong. Please try again.')
+        }
+        return
+      }
+
+      setSuccess(result.data)
+    } catch {
+      setError('Unable to connect. Please check your connection and try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  function update<K extends keyof PetitionFormData>(key: K, value: PetitionFormData[K]) {
+    setFormData((prev) => ({ ...prev, [key]: value }))
+    if (error) setError('')
   }
 
   return (
@@ -75,115 +144,216 @@ export default function JoinMovement() {
       <ScrollReveal variant="scaleUp" delay={0.2}>
         <div className="mt-12">
           <GlowCard glowColor="emerald" className="!p-8 md:!p-10">
-            {submitted ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-8"
-              >
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-emerald-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
+            <AnimatePresence mode="wait">
+              {success ? (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="text-center py-8"
+                >
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto mb-4">
+                    <svg
+                      className="w-8 h-8 text-emerald-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    Your voice has been added, {success.signerName}.
+                  </h3>
+                  <p className="text-slate-400 mb-4">
+                    You're a Founding Signer of the Tipper's Bill of Rights.
+                  </p>
+                  <div className="inline-block rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 mb-4">
+                    <p className="text-xs uppercase tracking-wider text-emerald-400/80 mb-1">
+                      Your Certificate ID
+                    </p>
+                    <p className="text-2xl font-mono font-bold text-white tracking-wider">
+                      {success.certificateId}
+                    </p>
+                  </div>
+                  <p className="text-sm text-slate-500">
+                    Signed on {new Date(success.signedAt).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </p>
+                </motion.div>
+              ) : (
+                <motion.form
+                  key="form"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onSubmit={handleSubmit}
+                  className="space-y-5"
+                >
+                  {/* Name row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="movement-firstname"
+                        className="block text-sm font-medium text-slate-300 mb-1.5"
+                      >
+                        First Name *
+                      </label>
+                      <input
+                        id="movement-firstname"
+                        type="text"
+                        required
+                        value={formData.firstName}
+                        onChange={(e) => update('firstName', e.target.value)}
+                        placeholder="First name"
+                        className={inputClasses}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="movement-lastname"
+                        className="block text-sm font-medium text-slate-300 mb-1.5"
+                      >
+                        Last Name *
+                      </label>
+                      <input
+                        id="movement-lastname"
+                        type="text"
+                        required
+                        value={formData.lastName}
+                        onChange={(e) => update('lastName', e.target.value)}
+                        placeholder="Last name"
+                        className={inputClasses}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label
+                      htmlFor="movement-email"
+                      className="block text-sm font-medium text-slate-300 mb-1.5"
+                    >
+                      Email (optional)
+                    </label>
+                    <input
+                      id="movement-email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => update('email', e.target.value)}
+                      placeholder="you@example.com"
+                      className={inputClasses}
                     />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  Your voice has been added.
-                </h3>
-                <p className="text-slate-400">
-                  You're part of the movement now. We'll reach out only when
-                  there's a bill that needs your support.
-                </p>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label
-                    htmlFor="movement-name"
-                    className="block text-sm font-medium text-slate-300 mb-1.5"
-                  >
-                    Full Name
-                  </label>
-                  <input
-                    id="movement-name"
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData((d) => ({ ...d, name: e.target.value }))
-                    }
-                    placeholder="Your full name"
-                    className="w-full px-4 py-3 rounded-lg bg-slate-800/80 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-colors"
-                  />
-                </div>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Used only for petition verification — never marketing
+                    </p>
+                  </div>
 
-                <div>
-                  <label
-                    htmlFor="movement-email"
-                    className="block text-sm font-medium text-slate-300 mb-1.5"
-                  >
-                    Email
-                  </label>
-                  <input
-                    id="movement-email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData((d) => ({ ...d, email: e.target.value }))
-                    }
-                    placeholder="you@example.com"
-                    className="w-full px-4 py-3 rounded-lg bg-slate-800/80 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-colors"
-                  />
-                  <p className="mt-1 text-xs text-slate-500">
-                    Used only for petition verification — never marketing
-                  </p>
-                </div>
+                  {/* City */}
+                  <div>
+                    <label
+                      htmlFor="movement-city"
+                      className="block text-sm font-medium text-slate-300 mb-1.5"
+                    >
+                      City *
+                    </label>
+                    <input
+                      id="movement-city"
+                      type="text"
+                      required
+                      value={formData.city}
+                      onChange={(e) => update('city', e.target.value)}
+                      placeholder="Your city"
+                      className={inputClasses}
+                    />
+                  </div>
 
-                <div>
-                  <label
-                    htmlFor="movement-statezip"
-                    className="block text-sm font-medium text-slate-300 mb-1.5"
-                  >
-                    State / Zip Code
-                  </label>
-                  <input
-                    id="movement-statezip"
-                    type="text"
-                    required
-                    value={formData.stateZip}
-                    onChange={(e) =>
-                      setFormData((d) => ({ ...d, stateZip: e.target.value }))
-                    }
-                    placeholder="e.g. MI 48104"
-                    className="w-full px-4 py-3 rounded-lg bg-slate-800/80 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-colors"
-                  />
-                  <p className="mt-1 text-xs text-slate-500">
-                    For mapping voter support by congressional district
-                  </p>
-                </div>
+                  {/* State + Zip row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="movement-state"
+                        className="block text-sm font-medium text-slate-300 mb-1.5"
+                      >
+                        State *
+                      </label>
+                      <select
+                        id="movement-state"
+                        required
+                        value={formData.state}
+                        onChange={(e) => update('state', e.target.value)}
+                        className={`${inputClasses} appearance-none`}
+                      >
+                        <option value="">Select state...</option>
+                        {US_STATES.map((s) => (
+                          <option key={s.code} value={s.code}>
+                            {s.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="movement-zip"
+                        className="block text-sm font-medium text-slate-300 mb-1.5"
+                      >
+                        Zip Code *
+                      </label>
+                      <input
+                        id="movement-zip"
+                        type="text"
+                        required
+                        pattern="\d{5}"
+                        maxLength={5}
+                        value={formData.zipCode}
+                        onChange={(e) => update('zipCode', e.target.value)}
+                        placeholder="12345"
+                        className={inputClasses}
+                      />
+                      <p className="mt-1 text-xs text-slate-500">
+                        For mapping voter support by congressional district
+                      </p>
+                    </div>
+                  </div>
 
-                <div className="pt-2">
-                  <MagneticButton variant="primary" size="lg" type="submit">
-                    Add My Voice
-                  </MagneticButton>
-                </div>
-              </form>
-            )}
+                  {/* Error message */}
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3"
+                    >
+                      <p className="text-sm text-red-400">{error}</p>
+                    </motion.div>
+                  )}
+
+                  <div className="pt-2">
+                    <MagneticButton
+                      variant="primary"
+                      size="lg"
+                      type="submit"
+                      disabled={submitting}
+                    >
+                      {submitting ? 'Signing...' : 'Add My Voice'}
+                    </MagneticButton>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
 
             {/* Supporter count */}
             <div className="mt-8 pt-6 border-t border-white/10 text-center">
               <StatCounter
-                value={47293}
+                value={success?.totalSigners ?? 47293}
                 suffix=" Americans have joined"
                 className="text-xl md:text-2xl font-bold text-emerald-400"
               />

@@ -13,6 +13,7 @@ interface MagneticButtonProps {
   className?: string
   href?: string
   type?: 'button' | 'submit'
+  disabled?: boolean
 }
 
 const glowColors: Record<Variant, string> = {
@@ -47,6 +48,7 @@ export default function MagneticButton({
   className = '',
   href,
   type = 'button',
+  disabled = false,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -56,7 +58,7 @@ export default function MagneticButton({
   const springY = useSpring(y, SPRING_CONFIG)
 
   function handleMouseMove(e: MouseEvent) {
-    if (!ref.current) return
+    if (!ref.current || disabled) return
     const rect = ref.current.getBoundingClientRect()
     const centerX = rect.left + rect.width / 2
     const centerY = rect.top + rect.height / 2
@@ -71,7 +73,8 @@ export default function MagneticButton({
 
   const classes = [
     'relative inline-flex items-center justify-center rounded-lg font-semibold',
-    'transition-colors duration-200 cursor-pointer select-none',
+    'transition-colors duration-200 select-none',
+    disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
     baseStyles[variant],
     sizeStyles[size],
     className,
@@ -83,16 +86,16 @@ export default function MagneticButton({
       style={{ x: springX, y: springY }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      whileHover={{ boxShadow: glowColors[variant] }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={disabled ? undefined : { boxShadow: glowColors[variant] }}
+      whileTap={disabled ? undefined : { scale: 0.97 }}
       className={classes}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
     >
       {children}
     </motion.div>
   )
 
-  if (href) {
+  if (href && !disabled) {
     return (
       <Link to={href} className="inline-block">
         {content}
@@ -101,7 +104,7 @@ export default function MagneticButton({
   }
 
   return (
-    <button type={type} className="inline-block bg-transparent border-none p-0">
+    <button type={type} disabled={disabled} className="inline-block bg-transparent border-none p-0">
       {content}
     </button>
   )
