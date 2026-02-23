@@ -140,10 +140,10 @@ export default function Terms() {
               name, address, category, and certification status in the public Safe Zone Directory.
               Businesses may request de-listing at any time by contacting{' '}
               <a
-                href="mailto:dave@tippersbillofrights.com"
+                href="mailto:support@tippersbillofrights.com"
                 className="text-emerald-400 hover:text-emerald-300 underline"
               >
-                dave@tippersbillofrights.com
+                support@tippersbillofrights.com
               </a>
               .
             </p>
@@ -241,10 +241,10 @@ export default function Terms() {
               In the spirit of the movement, we prefer to resolve disputes informally. If you
               have a concern, contact us at{' '}
               <a
-                href="mailto:dave@tippersbillofrights.com"
+                href="mailto:support@tippersbillofrights.com"
                 className="text-emerald-400 hover:text-emerald-300 underline"
               >
-                dave@tippersbillofrights.com
+                support@tippersbillofrights.com
               </a>
               {' '}and we will make a good-faith effort to resolve it within 30 days.
             </p>
@@ -305,10 +305,10 @@ export default function Terms() {
             </p>
             <p className="mt-4">
               <a
-                href="mailto:dave@tippersbillofrights.com"
+                href="mailto:support@tippersbillofrights.com"
                 className="text-emerald-400 hover:text-emerald-300 underline text-lg"
               >
-                dave@tippersbillofrights.com
+                support@tippersbillofrights.com
               </a>
             </p>
           </TermsSection>
