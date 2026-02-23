@@ -1,26 +1,42 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import MagneticButton from '../shared/MagneticButton.tsx'
+import { US_STATES } from '../../data/usStates'
 
 interface FormData {
   businessName: string
   businessType: string
+  address: string
   city: string
   state: string
+  zipCode: string
   website: string
-  minWage: string
-  acknowledgement: boolean
+  contactEmail: string
+  contactName: string
+  livingWageCertified: boolean
+  ethicalPosCertified: boolean
   signatureName: string
+}
+
+interface CertificationResult {
+  id: number
+  name: string
+  certificationStatus: string
+  certifiedAt: string
 }
 
 const initialForm: FormData = {
   businessName: '',
   businessType: '',
+  address: '',
   city: '',
   state: '',
+  zipCode: '',
   website: '',
-  minWage: '',
-  acknowledgement: false,
+  contactEmail: '',
+  contactName: '',
+  livingWageCertified: false,
+  ethicalPosCertified: false,
   signatureName: '',
 }
 
@@ -44,14 +60,16 @@ function TextInput({
   value,
   onChange,
   placeholder,
+  type = 'text',
 }: {
   value: string
   onChange: (v: string) => void
   placeholder?: string
+  type?: string
 }) {
   return (
     <input
-      type="text"
+      type={type}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
@@ -64,6 +82,9 @@ export default function ProclamationSignup() {
   const [step, setStep] = useState(0)
   const [direction, setDirection] = useState(1)
   const [form, setForm] = useState<FormData>(initialForm)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const [certResult, setCertResult] = useState<CertificationResult | null>(null)
 
   function next() {
     if (step < 3) {
@@ -81,6 +102,64 @@ export default function ProclamationSignup() {
 
   function update<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm({ ...form, [key]: value })
+    if (error) setError('')
+  }
+
+  async function handleSubmit() {
+    setError('')
+    setSubmitting(true)
+
+    try {
+      const response = await fetch('/api/businesses/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.businessName.trim(),
+          address: form.address.trim(),
+          city: form.city.trim(),
+          state: form.state,
+          zipCode: form.zipCode.trim(),
+          category: form.businessType,
+          website: form.website.trim() || undefined,
+          contactEmail: form.contactEmail.trim(),
+          contactName: form.contactName.trim(),
+          livingWageCertified: form.livingWageCertified,
+          ethicalPosCertified: form.ethicalPosCertified,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          setError('A business with this name already exists in this location.')
+        } else if (response.status === 429) {
+          setError('Too many requests. Please try again later.')
+        } else if (result.details) {
+          const firstError = Object.values(result.details)[0]
+          setError(typeof firstError === 'string' ? firstError : 'Please check your input.')
+        } else {
+          setError(result.error || 'Something went wrong.')
+        }
+        return
+      }
+
+      setCertResult(result.data)
+      setDirection(1)
+      setStep(3) // Move to Welcome step
+    } catch {
+      setError('Unable to connect. Please check your connection.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  function handleNext() {
+    if (step === 2) {
+      handleSubmit()
+    } else {
+      next()
+    }
   }
 
   return (
@@ -122,7 +201,7 @@ export default function ProclamationSignup() {
       </div>
 
       {/* Step content */}
-      <div className="relative min-h-[320px] overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 p-6 backdrop-blur-sm">
+      <div className="relative min-h-[380px] overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 p-6 backdrop-blur-sm">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={step}
@@ -158,8 +237,16 @@ export default function ProclamationSignup() {
                     <option value="service">Service</option>
                   </select>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
+                <div>
+                  <FieldLabel>Address</FieldLabel>
+                  <TextInput
+                    value={form.address}
+                    onChange={(v) => update('address', v)}
+                    placeholder="Street address"
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="col-span-1">
                     <FieldLabel>City</FieldLabel>
                     <TextInput
                       value={form.city}
@@ -169,15 +256,28 @@ export default function ProclamationSignup() {
                   </div>
                   <div>
                     <FieldLabel>State</FieldLabel>
-                    <TextInput
+                    <select
                       value={form.state}
-                      onChange={(v) => update('state', v)}
-                      placeholder="State"
+                      onChange={(e) => update('state', e.target.value)}
+                      className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-4 py-2.5 text-sm text-white outline-none transition-shadow focus:border-emerald-500/50"
+                    >
+                      <option value="">State</option>
+                      {US_STATES.map((s) => (
+                        <option key={s.code} value={s.code}>{s.code}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <FieldLabel>Zip Code</FieldLabel>
+                    <TextInput
+                      value={form.zipCode}
+                      onChange={(v) => update('zipCode', v)}
+                      placeholder="12345"
                     />
                   </div>
                 </div>
                 <div>
-                  <FieldLabel>Website</FieldLabel>
+                  <FieldLabel>Website (optional)</FieldLabel>
                   <TextInput
                     value={form.website}
                     onChange={(v) => update('website', v)}
@@ -189,37 +289,53 @@ export default function ProclamationSignup() {
 
             {step === 1 && (
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-white">Wage Commitment</h3>
+                <h3 className="text-lg font-bold text-white">Wage Commitment & Contact</h3>
                 <p className="text-sm text-slate-400">
                   Certification requires a commitment to paying all staff a living wage
                   and eliminating mandatory tipping.
                 </p>
-                <div>
-                  <FieldLabel>Minimum Hourly Wage Paid</FieldLabel>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">
-                      $
-                    </span>
-                    <input
-                      type="text"
-                      value={form.minWage}
-                      onChange={(e) => update('minWage', e.target.value)}
-                      placeholder="22.00"
-                      className="w-full rounded-lg border border-white/10 bg-slate-900/70 py-2.5 pl-7 pr-4 text-sm text-white placeholder-slate-600 outline-none transition-shadow focus:border-emerald-500/50 focus:shadow-[0_0_16px_rgba(16,185,129,0.1)]"
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <FieldLabel>Contact Name</FieldLabel>
+                    <TextInput
+                      value={form.contactName}
+                      onChange={(v) => update('contactName', v)}
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel>Contact Email</FieldLabel>
+                    <TextInput
+                      value={form.contactEmail}
+                      onChange={(v) => update('contactEmail', v)}
+                      placeholder="you@business.com"
+                      type="email"
                     />
                   </div>
                 </div>
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <input
                     type="checkbox"
-                    checked={form.acknowledgement}
-                    onChange={(e) => update('acknowledgement', e.target.checked)}
+                    checked={form.livingWageCertified}
+                    onChange={(e) => update('livingWageCertified', e.target.checked)}
                     className="mt-1 h-4 w-4 rounded border-white/20 bg-slate-900 text-emerald-500 accent-emerald-500"
                   />
                   <span className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
-                    I acknowledge that my business pays all employees a minimum of
-                    $15/hr or local equivalent, does not require tips at point of sale,
-                    and provides transparent pricing.
+                    I certify that my business pays all employees a living wage
+                    ($15/hr or local equivalent minimum) and does not rely on tips to
+                    supplement worker income.
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={form.ethicalPosCertified}
+                    onChange={(e) => update('ethicalPosCertified', e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-white/20 bg-slate-900 text-emerald-500 accent-emerald-500"
+                  />
+                  <span className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
+                    I certify that my business does not use guilt-driven tipping prompts
+                    at point of sale and provides transparent pricing.
                   </span>
                 </label>
               </div>
@@ -250,6 +366,17 @@ export default function ProclamationSignup() {
                     className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-4 py-3 font-serif text-lg italic text-emerald-400 placeholder-slate-600 outline-none transition-shadow focus:border-emerald-500/50 focus:shadow-[0_0_16px_rgba(16,185,129,0.1)]"
                   />
                 </div>
+
+                {/* Error message */}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3"
+                  >
+                    <p className="text-sm text-red-400">{error}</p>
+                  </motion.div>
+                )}
               </div>
             )}
 
@@ -295,8 +422,11 @@ export default function ProclamationSignup() {
                   transition={{ delay: 0.7 }}
                   className="mt-2 max-w-sm text-sm text-slate-400"
                 >
-                  {form.businessName || 'Your business'} is now part of the certified
-                  guilt-free directory. Your customers can browse, pay, and leave
+                  {certResult?.name || form.businessName || 'Your business'} is now{' '}
+                  <span className="text-emerald-400 font-semibold">
+                    {certResult?.certificationStatus || 'certified'}
+                  </span>{' '}
+                  and part of the guilt-free directory. Your customers can browse, pay, and leave
                   without a moral dilemma.
                 </motion.p>
 
@@ -320,7 +450,7 @@ export default function ProclamationSignup() {
                         Certified
                       </p>
                       <p className="font-bold text-white">
-                        {form.businessName || 'Your Business'}
+                        {certResult?.name || form.businessName || 'Your Business'}
                       </p>
                     </div>
                   </div>
@@ -341,8 +471,13 @@ export default function ProclamationSignup() {
           <div />
         )}
         {step < 3 && (
-          <MagneticButton variant="primary" size="sm" onClick={next}>
-            {step === 2 ? 'Submit' : 'Next'}
+          <MagneticButton
+            variant="primary"
+            size="sm"
+            onClick={handleNext}
+            disabled={submitting}
+          >
+            {submitting ? 'Submitting...' : step === 2 ? 'Submit' : 'Next'}
           </MagneticButton>
         )}
       </div>
