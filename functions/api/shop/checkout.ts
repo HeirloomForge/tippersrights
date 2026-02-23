@@ -147,6 +147,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: lineItems,
+      automatic_tax: { enabled: true },
       shipping_address_collection: {
         allowed_countries: ['US'],
       },
