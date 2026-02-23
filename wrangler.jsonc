@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "tippersrights",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2025-12-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tbor-db",
+      "database_id": "8e94fbc6-7d6e-4c45-b111-8c34777d68ea"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "RATE_LIMITS",
+      "id": "a2f2db9fd67741e78d0642b0f5766850"
+    }
+  ]
+}
