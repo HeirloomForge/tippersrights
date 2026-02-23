@@ -1,37 +1,41 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import StatCounter from '../shared/StatCounter'
 
-const POLL_INTERVAL_MS = 30_000 // refresh every 30s
-const FALLBACK_COUNT = 0 // show 0 if API unreachable (no fake numbers)
+const POLL_INTERVAL_MS = 30_000
 
 export default function LiveCounter() {
-  const [count, setCount] = useState<number | null>(null)
-  const [loaded, setLoaded] = useState(false)
-
-  const fetchCount = useCallback(async () => {
-    try {
-      const res = await fetch('/api/petition/count')
-      if (!res.ok) return
-      const json = await res.json()
-      setCount(json.data?.count ?? FALLBACK_COUNT)
-      setLoaded(true)
-    } catch {
-      // API unreachable — keep current count or show fallback
-      if (!loaded) {
-        setCount(FALLBACK_COUNT)
-        setLoaded(true)
-      }
-    }
-  }, [loaded])
+  const [count, setCount] = useState(0)
+  const mountedRef = useRef(true)
 
   useEffect(() => {
-    fetchCount()
-    const id = setInterval(fetchCount, POLL_INTERVAL_MS)
-    return () => clearInterval(id)
-  }, [fetchCount])
+    mountedRef.current = true
 
-  const displayCount = count ?? FALLBACK_COUNT
+    const controller = new AbortController()
+
+    async function poll() {
+      try {
+        const res = await fetch('/api/petition/count', { signal: controller.signal })
+        if (!res.ok || !mountedRef.current) return
+        const json = await res.json()
+        if (mountedRef.current) {
+          setCount(json.data?.count ?? 0)
+        }
+      } catch {
+        // API unreachable — keep current count
+      }
+    }
+
+    // Initial fetch + polling interval
+    poll()
+    const id = setInterval(poll, POLL_INTERVAL_MS)
+
+    return () => {
+      mountedRef.current = false
+      controller.abort()
+      clearInterval(id)
+    }
+  }, [])
 
   return (
     <div className="text-center">
@@ -40,14 +44,14 @@ export default function LiveCounter() {
         transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
       >
         <StatCounter
-          value={displayCount}
+          value={count}
           className="text-6xl sm:text-7xl md:text-8xl font-black text-white"
           duration={1.5}
         />
       </motion.div>
 
       <p className="mt-4 text-lg md:text-xl text-slate-400 tracking-wide">
-        {displayCount === 0
+        {count === 0
           ? 'be the first to sign the petition'
           : 'guilt-free transactions and counting'}
       </p>

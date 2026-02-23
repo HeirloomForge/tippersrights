@@ -32,7 +32,6 @@ interface FormData {
 interface FormErrors {
   story?: string
   category?: string
-  tipAmount?: string
 }
 
 interface Particle {
@@ -71,6 +70,8 @@ export default function SubmissionForm() {
   const [form, setForm] = useState<FormData>(initialForm)
   const [errors, setErrors] = useState<FormErrors>({})
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [apiError, setApiError] = useState('')
   const [particles, setParticles] = useState<Particle[]>([])
 
   function validate(): boolean {
@@ -81,33 +82,55 @@ export default function SubmissionForm() {
     if (!form.category) {
       next.category = 'Pick a category.'
     }
-    if (!form.tipAmount.trim()) {
-      next.tipAmount = 'What was the absurd amount?'
-    }
     setErrors(next)
     return Object.keys(next).length === 0
   }
 
   async function handleSubmit() {
     if (!validate()) return
+    setApiError('')
+    setSubmitting(true)
 
-    // Wave 2 will wire this to POST /api/stories/submit
-    console.log('Story submission (mock):', {
-      story: form.story.trim(),
-      category: form.category,
-      tip_requested: form.tipAmount.trim(),
-      location: form.location.trim(),
-    })
+    try {
+      const response = await fetch('/api/stories/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          story: form.story.trim(),
+          category: form.category,
+          tipRequested: form.tipAmount.trim() || undefined,
+          location: form.location.trim() || undefined,
+        }),
+      })
 
-    setParticles(generateParticles())
-    setSubmitted(true)
+      if (!response.ok) {
+        const result = await response.json()
+        if (response.status === 429) {
+          setApiError('Too many submissions. Please try again later.')
+        } else if (result.details) {
+          const firstError = Object.values(result.details)[0]
+          setApiError(typeof firstError === 'string' ? firstError : 'Please check your input.')
+        } else {
+          setApiError(result.error || 'Something went wrong.')
+        }
+        return
+      }
 
-    setTimeout(() => {
-      setSubmitted(false)
-      setForm(initialForm)
-      setErrors({})
-      setParticles([])
-    }, 2500)
+      // Success
+      setParticles(generateParticles())
+      setSubmitted(true)
+
+      setTimeout(() => {
+        setSubmitted(false)
+        setForm(initialForm)
+        setErrors({})
+        setParticles([])
+      }, 2500)
+    } catch {
+      setApiError('Unable to connect. Please check your connection.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function updateField(field: keyof FormData, value: string) {
@@ -115,6 +138,7 @@ export default function SubmissionForm() {
     if (errors[field as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }))
     }
+    if (apiError) setApiError('')
   }
 
   const inputClasses =
@@ -233,7 +257,7 @@ export default function SubmissionForm() {
 
                 <div>
                   <label htmlFor="tipAmount" className="block text-sm font-medium text-slate-300 mb-2">
-                    Tip Amount Requested
+                    Tip Amount Requested (optional)
                   </label>
                   <input
                     id="tipAmount"
@@ -243,9 +267,6 @@ export default function SubmissionForm() {
                     placeholder='e.g. 25%, $5 on a $3 coffee'
                     className={inputClasses}
                   />
-                  {errors.tipAmount && (
-                    <p className="mt-1 text-sm text-red-400">{errors.tipAmount}</p>
-                  )}
                 </div>
               </div>
 
@@ -264,10 +285,26 @@ export default function SubmissionForm() {
                 />
               </div>
 
+              {/* API Error */}
+              {apiError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3"
+                >
+                  <p className="text-sm text-red-400">{apiError}</p>
+                </motion.div>
+              )}
+
               {/* Submit */}
               <div className="pt-2">
-                <MagneticButton variant="primary" size="lg" onClick={handleSubmit}>
-                  Submit to the Hall
+                <MagneticButton
+                  variant="primary"
+                  size="lg"
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                >
+                  {submitting ? 'Submitting...' : 'Submit to the Hall'}
                 </MagneticButton>
               </div>
             </div>

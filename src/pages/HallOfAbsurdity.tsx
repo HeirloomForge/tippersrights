@@ -29,7 +29,7 @@ function computeStats(testimonials: Testimonial[]) {
 }
 
 export default function HallOfAbsurdity() {
-  // Wave 2 will replace this with live data from GET /api/stories
+  // Display stays on static mock data (per D7). Submissions go to D1 via API.
   const testimonials = mockTestimonials
 
   const stats = useMemo(() => computeStats(testimonials), [testimonials])
