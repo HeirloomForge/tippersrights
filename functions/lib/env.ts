@@ -9,4 +9,5 @@ export interface Env {
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
   PRINTFUL_API_TOKEN: string;
+  PRINTFUL_CONFIRM_ORDERS: string; // 'true' to auto-fulfill, anything else = draft mode
 }

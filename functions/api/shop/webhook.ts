@@ -177,10 +177,12 @@ async function handleCheckoutCompleted(
   }));
 
   try {
-    const printfulOrderId = await createPrintfulOrder(env.PRINTFUL_API_TOKEN, {
-      recipient,
-      items: printfulItems,
-    });
+    const confirmOrder = env.PRINTFUL_CONFIRM_ORDERS === 'true';
+    const printfulOrderId = await createPrintfulOrder(
+      env.PRINTFUL_API_TOKEN,
+      { recipient, items: printfulItems },
+      confirmOrder
+    );
 
     // Update order with Printful ID and status
     await env.DB.prepare(

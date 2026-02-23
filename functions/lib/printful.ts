@@ -36,13 +36,16 @@ export interface PrintfulOrderResponse {
 
 /**
  * Create an order in Printful.
+ * When confirm=false (default), creates a draft order you can review in the Printful dashboard.
+ * Set confirm=true for production to auto-start fulfillment.
  * Returns the Printful order ID on success, or throws on failure.
  */
 export async function createPrintfulOrder(
   token: string,
-  order: PrintfulOrderRequest
+  order: PrintfulOrderRequest,
+  confirm = false
 ): Promise<number> {
-  const response = await fetch(`${PRINTFUL_API_BASE}/orders`, {
+  const response = await fetch(`${PRINTFUL_API_BASE}/orders?confirm=${confirm}`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
