@@ -1,40 +1,45 @@
 /**
  * AUTO-GENERATED — Do not edit manually.
  * Run `npm run sync-products` to regenerate from Printful.
- * Last synced: 2026-02-23T15:32:09.381Z
- *
- * Server-side product catalog for Workers endpoints.
- * Workers cannot import from src/ so this is a separate copy.
+ * Last synced: 2026-02-23T15:32:09.380Z
  */
 
-export interface ServerProductVariant {
-  syncVariantId: number;
-  printfulVariantId: number;
-  size: string;
-  color: string;
-  price: number;
-  inStock: boolean;
+export interface ProductVariant {
+  syncVariantId: number
+  printfulVariantId: number
+  size: string
+  color: string
+  price: number
+  inStock: boolean
 }
 
-export interface ServerProduct {
-  id: string;
-  printfulProductId: number;
-  name: string;
-  basePrice: number;
-  category: string;
-  inStock: boolean;
-  variants: ServerProductVariant[];
-  sizes: string[];
-  colors: string[];
+export interface Product {
+  id: string
+  printfulProductId: number
+  name: string
+  description: string
+  category: string
+  gradient: string
+  image: string
+  thumbnailUrl: string
+  basePrice: number
+  inStock: boolean
+  variants: ProductVariant[]
+  sizes: string[]
+  colors: string[]
 }
 
-export const products: ServerProduct[] = [
+export const products: Product[] = [
   {
     "id": "printful-420973599",
     "printfulProductId": 420973599,
     "name": "\"I Didn't Tip and I'm Fine\" Hoodie",
-    "basePrice": 49,
+    "description": "Heavyweight hoodie for those cold mornings at the drive-through. No tip required to wear it.",
     "category": "apparel",
+    "gradient": "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
+    "image": "https://files.cdn.printful.com/files/405/4055b52b184dd6b77007c23b5637b010_preview.png",
+    "thumbnailUrl": "https://files.cdn.printful.com/files/12c/12c1918f209c4c421ddad7768b113a93_preview.png",
+    "basePrice": 49,
     "inStock": true,
     "variants": [
       {
@@ -183,8 +188,12 @@ export const products: ServerProduct[] = [
     "id": "printful-420973298",
     "printfulProductId": 420973298,
     "name": "\"No Guilt Zone\" Sweatshirt",
-    "basePrice": 47.24,
+    "description": "Organic cotton sweatshirt for guilt-free lounging. The revolution is comfortable.",
     "category": "apparel",
+    "gradient": "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
+    "image": "https://files.cdn.printful.com/files/61b/61ba8f38446dddcaecd1c6ad33202f5f_preview.png",
+    "thumbnailUrl": "https://files.cdn.printful.com/files/61b/61ba8f38446dddcaecd1c6ad33202f5f_preview.png",
+    "basePrice": 47.24,
     "inStock": true,
     "variants": [
       {
@@ -280,23 +289,4 @@ export const products: ServerProduct[] = [
       "White"
     ]
   }
-];
-
-/** Lookup a product by ID. Returns undefined if not found. */
-export function getProductById(id: string): ServerProduct | undefined {
-  return products.find((p) => p.id === id);
-}
-
-/** Lookup the exact variant for a product + size + color combo. */
-export function getVariant(
-  product: ServerProduct,
-  size?: string,
-  color?: string
-): ServerProductVariant | undefined {
-  return product.variants.find(
-    (v) =>
-      (!size || v.size === size) &&
-      (!color || v.color === color) &&
-      v.inStock
-  );
-}
+]

@@ -78,7 +78,10 @@ export default function CartPreview({ cart }: CartPreviewProps) {
                     <p className="text-slate-400 text-xs">
                       {item.size && <span className="text-emerald-400">{item.size} &middot; </span>}
                       Qty: {item.quantity} &times; $
-                      {item.product.price.toFixed(2)}
+                      {(item.size
+                        ? (item.product.variants.find((v) => v.size === item.size && v.inStock)?.price ?? item.product.basePrice)
+                        : item.product.basePrice
+                      ).toFixed(2)}
                     </p>
                   </div>
                   <button

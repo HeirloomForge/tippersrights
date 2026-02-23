@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
-import type { Product } from '../../data/mockProducts'
+import type { Product } from '../../data/products'
 import MagneticButton from '../shared/MagneticButton'
 
 interface ProductCardProps {
@@ -72,12 +72,29 @@ function TiltWrapper({
 
 export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const hasVariants = product.sizes.length > 0 || product.colors.length > 0
   const [selectedSize, setSelectedSize] = useState<string | undefined>(
-    product.sizes?.[2] // Default to 'L' if apparel
+    product.sizes.length > 0
+      ? product.sizes[Math.min(2, product.sizes.length - 1)] // Default to 'L' or largest available
+      : undefined
+  )
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(
+    product.colors.length > 0 ? product.colors[0] : undefined
   )
 
-  const isApparel = product.category === 'apparel' && product.sizes
+  const isApparel = product.category === 'apparel' && product.sizes.length > 0
   const isOutOfStock = !product.inStock
+
+  // Find the price for the selected variant (may differ by size/color)
+  const selectedVariant = hasVariants
+    ? product.variants.find(
+        (v) =>
+          (!selectedSize || v.size === selectedSize) &&
+          (!selectedColor || v.color === selectedColor)
+      )
+    : product.variants[0]
+
+  const displayPrice = selectedVariant?.price ?? product.basePrice
 
   function handleAddToCart() {
     if (isOutOfStock) return
@@ -138,10 +155,32 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
           {product.description}
         </p>
 
+        {/* Color selector */}
+        {product.colors.length > 1 && (
+          <div className="mt-3 flex gap-1.5 flex-wrap">
+            {product.colors.map((color) => (
+              <button
+                key={color}
+                onClick={() => setSelectedColor(color)}
+                disabled={isOutOfStock}
+                className={[
+                  'px-3 py-1 text-xs font-semibold rounded-md transition-all duration-200',
+                  selectedColor === color
+                    ? 'bg-emerald-500 text-white border border-emerald-400'
+                    : 'bg-slate-800 text-slate-400 border border-white/10 hover:border-white/30 hover:text-white',
+                  isOutOfStock ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+                ].join(' ')}
+              >
+                {color}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Size selector for apparel */}
         {isApparel && (
           <div className="mt-3 flex gap-1.5 flex-wrap">
-            {product.sizes!.map((size) => (
+            {product.sizes.map((size) => (
               <button
                 key={size}
                 onClick={() => setSelectedSize(size)}
@@ -162,7 +201,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
 
         <div className="mt-4 flex items-center justify-between">
           <span className="text-white font-black text-xl">
-            ${product.price.toFixed(2)}
+            ${displayPrice.toFixed(2)}
           </span>
           <MagneticButton
             variant="primary"

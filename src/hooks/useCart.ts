@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
-import type { Product } from '../data/mockProducts'
+import type { Product } from '../data/products'
 
 const STORAGE_KEY = 'tbor-cart'
 
@@ -114,7 +114,14 @@ export default function useCart(): CartActions {
 
   const totalPrice = useMemo(
     () =>
-      cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+      cart.reduce((sum, item) => {
+        // Use variant price when size is selected, fall back to basePrice
+        const variant = item.size
+          ? item.product.variants.find((v) => v.size === item.size && v.inStock)
+          : item.product.variants[0]
+        const price = variant?.price ?? item.product.basePrice
+        return sum + price * item.quantity
+      }, 0),
     [cart]
   )
 

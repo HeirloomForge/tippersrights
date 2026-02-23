@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { mockProducts, type Product } from '../../data/mockProducts'
+import { products as allProducts, type Product } from '../../data/products'
 import ProductCard from './ProductCard'
 
 type Category = 'all' | Product['category']
@@ -25,13 +25,13 @@ export default function ProductGrid({ onAddToCart }: ProductGridProps) {
   const filteredProducts = useMemo(() => {
     const products =
       activeCategory === 'all'
-        ? [...mockProducts]
-        : mockProducts.filter((p) => p.category === activeCategory)
+        ? [...allProducts]
+        : allProducts.filter((p) => p.category === activeCategory)
 
     if (sortOrder === 'price-asc') {
-      products.sort((a, b) => a.price - b.price)
+      products.sort((a, b) => a.basePrice - b.basePrice)
     } else if (sortOrder === 'price-desc') {
-      products.sort((a, b) => b.price - a.price)
+      products.sort((a, b) => b.basePrice - a.basePrice)
     }
 
     return products

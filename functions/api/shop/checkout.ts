@@ -9,7 +9,7 @@ import type { Env } from '../../lib/env';
 import { jsonResponse, errorResponse, rateLimitResponse } from '../../lib/response';
 import { hashIP } from '../../lib/security';
 import { checkRateLimit, RATE_LIMIT_CONFIGS, rateLimitHeaders } from '../../lib/rate-limit';
-import { getProductById } from '../../lib/products';
+import { getProductById, getVariant } from '../../lib/products';
 
 interface CheckoutItem {
   productId: string;
@@ -55,6 +55,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const errors: Record<string, string> = {};
   const validatedItems: Array<{
     product: ReturnType<typeof getProductById> & {};
+    variant: ReturnType<typeof getVariant> & {};
     quantity: number;
     size?: string;
   }> = [];
@@ -84,47 +85,56 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       continue;
     }
 
-    // Validate size for apparel
-    if (product.category === 'apparel') {
+    // Validate size for products with size variants
+    if (product.sizes.length > 0) {
       if (!item.size) {
         errors[`items[${i}].size`] = `Size is required for ${product.name}`;
         continue;
       }
-      if (!product.sizes || !product.sizes.includes(item.size)) {
+      if (!product.sizes.includes(item.size)) {
         errors[`items[${i}].size`] = `Invalid size "${item.size}" for ${product.name}`;
         continue;
       }
     }
 
-    validatedItems.push({ product, quantity, size: item.size });
+    // Find the matching variant (by size, using first available color)
+    const variant = getVariant(product, item.size);
+    if (!variant) {
+      errors[`items[${i}]`] = `No available variant for ${product.name} (${item.size || 'default'})`;
+      continue;
+    }
+
+    validatedItems.push({ product, variant, quantity, size: item.size });
   }
 
   if (Object.keys(errors).length > 0) {
     return errorResponse('Validation failed', 'VALIDATION_ERROR', 400, errors);
   }
 
-  // Build Stripe line items using price_data (static catalog is source of truth)
+  // Build Stripe line items using price_data (variant price is source of truth)
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = validatedItems.map(
-    ({ product, quantity, size }) => ({
+    ({ product, variant, quantity, size }) => ({
       price_data: {
         currency: 'usd',
         product_data: {
           name: size ? `${product.name} (${size})` : product.name,
         },
-        unit_amount: Math.round(product.price * 100),
+        unit_amount: Math.round(variant.price * 100),
       },
       quantity,
     })
   );
 
   // Build metadata for webhook to reconstruct items with variant IDs
-  const itemsMeta = validatedItems.map(({ product, quantity, size }) => ({
+  const itemsMeta = validatedItems.map(({ product, variant, quantity, size }) => ({
     productId: product.id,
-    variantId: product.printfulVariantId,
+    variantId: variant.printfulVariantId,
+    syncVariantId: variant.syncVariantId,
     name: product.name,
     quantity,
     size: size || null,
-    unitPrice: Math.round(product.price * 100),
+    color: variant.color || null,
+    unitPrice: Math.round(variant.price * 100),
   }));
 
   // Create Stripe Checkout Session
