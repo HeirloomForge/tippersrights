@@ -67,7 +67,7 @@ export default function Navbar() {
       className={[
         'fixed top-0 left-0 w-full z-50 transition-all duration-300',
         scrolled || mobileOpen || !isLanding
-          ? 'bg-slate-950/95 backdrop-blur-lg border-b border-white/5 shadow-lg shadow-black/10'
+          ? 'bg-slate-950 backdrop-blur-lg border-b border-white/5 shadow-lg shadow-black/10'
           : 'bg-transparent',
       ].join(' ')}
     >
