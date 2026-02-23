@@ -18,10 +18,7 @@ export default function CertificateActions({ certificateId }: CertificateActions
     if (!node) return null
 
     try {
-      // Generate at 2x for crisp output (1200x630)
       const dataUrl = await toPng(node, {
-        width: 1200,
-        height: 630,
         pixelRatio: 2,
         backgroundColor: '#1e1b14',
       })
@@ -39,8 +36,6 @@ export default function CertificateActions({ certificateId }: CertificateActions
       if (!node) return
 
       const dataUrl = await toPng(node, {
-        width: 1200,
-        height: 630,
         pixelRatio: 2,
         backgroundColor: '#1e1b14',
       })

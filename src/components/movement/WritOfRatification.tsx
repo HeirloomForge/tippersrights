@@ -52,14 +52,14 @@ export default function WritOfRatification({
         <div className="w-32 h-px mb-3" style={{ background: 'linear-gradient(90deg, transparent, rgba(180, 160, 100, 0.5), transparent)' }} />
 
         <h2
-          className="text-xs uppercase tracking-[0.3em] mb-1"
+          className="text-base sm:text-lg uppercase tracking-[0.3em] mb-1"
           style={{ color: 'rgba(180, 160, 100, 0.7)', fontFamily: 'Georgia, "Times New Roman", serif' }}
         >
           Writ of Ratification
         </h2>
 
         <h3
-          className="text-[10px] uppercase tracking-[0.2em] mb-4"
+          className="text-xs sm:text-sm uppercase tracking-[0.2em] mb-4"
           style={{ color: 'rgba(180, 160, 100, 0.5)', fontFamily: 'Georgia, "Times New Roman", serif' }}
         >
           Tipper's Bill of Rights
@@ -70,7 +70,7 @@ export default function WritOfRatification({
 
         {/* Body text */}
         <p
-          className="text-[11px] leading-relaxed max-w-[440px] mb-4"
+          className="text-sm sm:text-base leading-relaxed max-w-[480px] mb-4"
           style={{ color: 'rgba(220, 210, 180, 0.85)', fontFamily: 'Georgia, "Times New Roman", serif' }}
         >
           Be it known that{' '}
@@ -96,13 +96,13 @@ export default function WritOfRatification({
           }}
         >
           <p
-            className="text-[10px] uppercase tracking-widest mb-0.5"
+            className="text-xs uppercase tracking-widest mb-0.5"
             style={{ color: 'rgba(16, 185, 129, 0.6)' }}
           >
             Certificate
           </p>
           <p
-            className="text-sm font-mono font-bold tracking-wider"
+            className="text-base sm:text-lg font-mono font-bold tracking-wider"
             style={{ color: '#10b981' }}
           >
             {certificateId}
@@ -114,7 +114,7 @@ export default function WritOfRatification({
 
         {/* Branding */}
         <p
-          className="text-[9px] tracking-wider"
+          className="text-xs tracking-wider"
           style={{ color: 'rgba(180, 160, 100, 0.4)' }}
         >
           tippersbillofrights.com
