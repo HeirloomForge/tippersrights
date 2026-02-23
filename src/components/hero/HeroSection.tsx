@@ -187,16 +187,16 @@ export default function HeroSection() {
       {/* Hero — side-by-side layout */}
       <section
         ref={heroRef}
-        className="relative min-h-[90vh] flex flex-col lg:flex-row items-center px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto"
+        className="relative min-h-[90vh] flex flex-col lg:flex-row items-center px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto overflow-hidden"
       >
         {/* Background blurs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
 
         {/* Text content */}
         <motion.div
           style={{ y: yText, opacity: opacityText }}
-          className="w-full lg:w-1/2 z-10 pt-24 lg:pt-20"
+          className="w-full lg:w-1/2 z-10 pt-24 lg:pt-20 text-center lg:text-left"
         >
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -208,13 +208,13 @@ export default function HeroSection() {
               <span className="text-emerald-400 block mt-2">FRICTIONLESS</span>{' '}
               BASELINE.
             </h1>
-            <div className="h-1 w-24 bg-emerald-500 mb-8 mt-6" />
-            <p className="text-xl md:text-2xl text-slate-300 font-serif italic max-w-lg leading-relaxed mb-10">
+            <div className="h-1 w-24 bg-emerald-500 mb-8 mt-6 mx-auto lg:mx-0" />
+            <p className="text-xl md:text-2xl text-slate-300 font-serif italic max-w-lg leading-relaxed mb-10 mx-auto lg:mx-0">
               Processing a transaction warrants zero tip. Expert consultation
               warrants a premium. End the flipped iPad herd mentality.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 to="/billofrights"
                 className="group relative inline-flex items-center justify-center px-8 py-4 bg-emerald-500 text-white font-bold uppercase tracking-widest overflow-hidden rounded-xl hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20"

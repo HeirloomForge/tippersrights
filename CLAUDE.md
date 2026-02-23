@@ -1,50 +1,144 @@
-# Tipper's Bill of Rights - Frontend UI/UX Architect Guide
+# CLAUDE.md
 
-## Role & Objective
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Act as a world-class Frontend Engineer and UI/UX Visionary. The task is to design and generate the React/Vite code for "Tipper's Bill of Rights" (tippersbillofrights.com). The site operates functionally as a B2B certification directory but must masquerade as a viral, tongue-in-cheek consumer advocacy movement fighting "tipping fatigue."
+## Project Overview
+
+**Tipper's Bill of Rights (TBOR)** is a tongue-in-cheek consumer advocacy site that functionally operates as a B2B certification directory. It masquerades as a viral movement fighting "tipping fatigue" while connecting consumers with businesses that practice fair compensation.
+
+**Domain**: tippersbillofrights.com
+**Email**: dave@tippersbillofrights.com (Zoho)
+**Project ID**: TBOR
+**YouTrack**: https://anvil.heirloomforge.com/projects/TBOR
+**Lead**: dave@heirloomforge.com
+
+---
+
+## Current State
+
+- DNS and domain configured
+- Custom email via Zoho (dave@tippersbillofrights.com)
+- Cloudflare Pages deployment set up
+- Wrangler CLI and Supabase CLI installed
+- Static website content largely built (React + Vite)
+- Research reference material in `reference/`
+
+---
 
 ## Tech Stack
 
-- **Framework**: React built with Vite
-- **Styling**: Tailwind CSS
+- **Framework**: React 19 + TypeScript + Vite 7
+- **Styling**: Tailwind CSS 4
 - **Animations**: Framer Motion
-- **Backend Hooks**: Prepare mock states for Supabase (https://supabase.com) and Cloudflare Pages (https://cloudflare.com) integration
+- **Routing**: React Router DOM 7
+- **Backend**: Supabase (planned)
+- **Hosting**: Cloudflare Pages
+- **CLI Tools**: Wrangler, Supabase CLI
 
-## Design Philosophy & Aesthetic
+---
 
-- **Tone**: Rebellious, bold, highly polished, and tongue-in-cheek. Think "modern tech startup meets historical revolutionary documents."
-- **Typography**: High contrast. Use a brutalist, oversized sans-serif for massive impact headlines, paired with a highly legible, elegant serif for the actual "Bill of Rights" text to mimic legal authority.
-- **Color Palette**: Deep, dark backgrounds (slate or charcoal) to make neon or stark white interactive elements pop. The "certified business" badge should feature a distinct, trustworthy color like vibrant emerald or electric blue.
+## Design Philosophy
 
-## Core Animations & Interactions (Mandatory)
+- **Tone**: Rebellious, bold, polished, tongue-in-cheek. "Modern tech startup meets historical revolutionary documents."
+- **Typography**: Brutalist oversized sans-serif for headlines, elegant serif for Bill of Rights text
+- **Color Palette**: Deep dark backgrounds (slate/charcoal), neon/white interactive elements, emerald/electric blue for certification badges
+- **Mobile-first**: 80%+ traffic expected on phones
 
-1. **Hero Section Interactive Element**: A 3D-styled, glowing point-of-sale iPad screen showing a "25% Tip" prompt that physically tilts or slides away when the user scrolls, revealing the main headline.
-2. **Scroll-Linked Typography**: Use Framer Motion for scroll-linked typography. Headlines should assemble themselves from scattered letters as the user scrolls down the page.
-3. **Button Micro-Interactions**: All buttons must exhibit a subtle magnetic pull and a glowing border transition on hover (e.g., "Join the Movement", "Find a Safe Business").
-4. **"Tear-Away Receipt" Page Transition**: When moving between main pages, the screen should briefly mimic a physical receipt being ripped from a printer.
+---
 
-## Key Page Layouts
+## Project Structure
 
-### 1. Landing Page
-Optimize for viral sharing. Feature a stark, bold header, a live "Guilt-Free Transactions Saved" counter with a rolling number animation, and immediate calls-to-action for both consumers and businesses.
+- `src/` - React application source
+  - `components/` - Reusable UI components
+  - `pages/` - Route pages
+  - `data/` - Static data/content
+  - `hooks/` - Custom React hooks
+- `public/` - Static assets
+- `reference/` - Research material (tipping culture resources)
+- `email/` - Email-related assets
 
-### 2. The Bill of Rights (`/billofrights`)
-Design as a modern, dark-mode parchment. Text should fade in smoothly as if being written by a typewriter or quill. Include a sticky floating action button to "Print the Pocket Card."
+---
 
-### 3. The Safe Zone Directory
-A map and search interface with a sleek, radar-sweep animation on load. Certified businesses should appear as glowing pins. Include sliding side-panels for business details rather than navigating away from the map.
+## Build & Development
 
-### 4. The Arsenal (Merch/Printables Store)
-A highly visual grid layout displaying the "Do Better" business cards and "Certified" window decals. Hovering over a window decal should trigger a reflection animation, making it look like real glass.
+```bash
+npm run dev       # Start dev server
+npm run build     # TypeScript check + Vite build
+npm run lint      # ESLint
+npm run preview   # Preview production build
+```
 
-### 5. The Reality Check (Education Hub)
-A masonry grid layout for articles on the socio-economic history of tipping and behavioral psychology. Use parallax scrolling for the featured images to create depth.
+---
 
 ## Coding Constraints
 
 - Write modular, reusable React components
-- Ensure absolute mobile responsiveness — the viral nature means 80%+ of traffic will be on phones
-- Avoid standard, uninspired bootstrap-style layouts
-- Push the boundaries of Tailwind CSS with custom shadows, backdrop blurs, and irregular border radiuses
+- Mobile responsiveness is mandatory
+- Avoid standard bootstrap-style layouts
+- Push boundaries with Tailwind CSS (custom shadows, backdrop blurs, irregular borders)
 - File size target: 200-500 lines per module
+
+---
+
+## YouTrack Development Workflow (MANDATORY)
+
+**All work is tracked in YouTrack under project TBOR.**
+
+```
+Ready Build → Building → Ready Test → Testing → Ready Review → Done
+     ▲                         │           │
+     └─────────────────────────┴───────────┘
+              Tests FAIL: Add Bug label, return with failure details
+```
+
+### Developer Agent Responsibilities:
+1. **Before starting**: Read issue description AND all comments (comments contain test feedback, clarifications, prior attempts)
+2. **Before coding**: Move issue → `Building`
+3. **After completing**: Add build comment (files, commit, summary) → Move to `Ready Test`
+4. **Spawn QA agent** to validate completed work
+
+### QA Agent Responsibilities:
+1. Search for issues in `Ready Test` state
+2. **Before testing**: Move issue → `Testing`
+3. Read issue + build comments for context
+4. Build test cases from Acceptance Criteria
+5. Execute tests (browser, API, database)
+6. **On PASS**: Add test comment → Move to `Ready Review`
+7. **On FAIL**: Add failure comment + Bug label → Move to `Ready Build`
+
+### Commands for State Transitions:
+```bash
+# Developer moves to Building
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py state TBOR-XXXX Building
+
+# Developer adds build comment and moves to Ready Test
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py comment TBOR-XXXX "**Build**\n**Files:** ...\n**Commit:** ...\n**Summary:** ..."
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py state TBOR-XXXX "Ready Test"
+
+# QA moves to Testing
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py state TBOR-XXXX Testing
+
+# QA on pass
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py comment TBOR-XXXX "**QA PASSED**\n**Tested:** ...\n**Evidence:** ..."
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py state TBOR-XXXX "Ready Review"
+
+# QA on fail
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py comment TBOR-XXXX "**QA FAILED**\n**Issue:** ...\n**Recommendation:** ..."
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py tag-add TBOR-XXXX Bug
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py state TBOR-XXXX "Ready Build"
+```
+
+See `.claude/rules/workflow/youtrack.md` for complete workflow rules.
+
+---
+
+## MCP Servers & Skills
+
+### YouTrack (via Skills)
+
+Use `youtrack-operations` skill:
+```bash
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py search "project: TBOR State: {Ready Build}"
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py issue TBOR-1
+python ~/.claude/skills/youtrack-operations/scripts/youtrack_api.py state TBOR-1 "Ready Test"
+```
