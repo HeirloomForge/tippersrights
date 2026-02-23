@@ -9,7 +9,6 @@ import Certification from './pages/Certification'
 import Education from './pages/Education'
 import EmployeeSafeSpace from './pages/EmployeeSafeSpace'
 import Shop from './pages/Shop'
-import ShopSuccess from './pages/ShopSuccess'
 import PaymentGuidelines from './pages/PaymentGuidelines'
 import Movement from './pages/Movement'
 import Privacy from './pages/Privacy'
@@ -30,7 +29,6 @@ function AppRoutes() {
         <Route path="/education" element={<Education />} />
         <Route path="/employee-safe-space" element={<EmployeeSafeSpace />} />
         <Route path="/shop" element={<Shop />} />
-        <Route path="/shop/success" element={<ShopSuccess />} />
         <Route path="/payment-guidelines" element={<PaymentGuidelines />} />
         <Route path="/movement" element={<Movement />} />
         <Route path="/privacy" element={<Privacy />} />

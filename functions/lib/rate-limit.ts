@@ -33,7 +33,6 @@ export const RATE_LIMIT_CONFIGS: Record<string, RateLimitConfig> = {
   'businesses.search': { limit: 30, windowSeconds: 60 },    // 30/min
   'stories.submit': { limit: 5, windowSeconds: 3600 },      // 5/hr
   'businesses.apply': { limit: 2, windowSeconds: 86400 },   // 2/day
-  'shop.checkout': { limit: 10, windowSeconds: 3600 },      // 10/hr
 };
 
 /**

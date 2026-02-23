@@ -8,7 +8,7 @@ const navLinks = [
   { to: '/hall-of-absurdity', label: 'Hall of Absurdity' },
   { to: '/directory', label: 'Safe Zone' },
   { to: '/education', label: 'Reality Check' },
-  { to: '/shop', label: 'Arsenal' },
+  { to: '/shop', label: 'Merch' },
 ]
 
 const menuVariants = {
@@ -73,7 +73,12 @@ export default function Navbar() {
         ].join(' ')}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-3 group">
+            <img
+              src="/images/tbor-logo.png"
+              alt="TBOR logo"
+              className="h-8 w-8 md:h-10 md:w-10"
+            />
             <span className="text-xl md:text-2xl font-black uppercase tracking-widest">
               <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors">
                 Tipper&apos;s
