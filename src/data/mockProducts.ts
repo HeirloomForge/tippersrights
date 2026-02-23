@@ -6,6 +6,9 @@ export interface Product {
   category: 'cards' | 'decals' | 'badges' | 'apparel'
   gradient: string
   image: string
+  printfulVariantId: number
+  sizes?: string[]
+  inStock: boolean
 }
 
 export const mockProducts: Product[] = [
@@ -16,7 +19,9 @@ export const mockProducts: Product[] = [
     price: 12.99,
     category: 'cards',
     gradient: 'linear-gradient(135deg, #1e293b 0%, #059669 100%)',
-    image: '/images/do_better_cards.png'
+    image: '/images/do_better_cards.png',
+    printfulVariantId: 1001,
+    inStock: true
   },
   {
     id: 'prod-002',
@@ -25,7 +30,9 @@ export const mockProducts: Product[] = [
     price: 8.99,
     category: 'decals',
     gradient: 'linear-gradient(135deg, #059669 0%, #34d399 100%)',
-    image: '/images/we_pay_fairly_decal.png'
+    image: '/images/we_pay_fairly_decal.png',
+    printfulVariantId: 1002,
+    inStock: true
   },
   {
     id: 'prod-003',
@@ -34,7 +41,9 @@ export const mockProducts: Product[] = [
     price: 5.99,
     category: 'badges',
     gradient: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
-    image: '/images/cert_badge.png'
+    image: '/images/cert_badge.png',
+    printfulVariantId: 1003,
+    inStock: true
   },
   {
     id: 'prod-004',
@@ -43,7 +52,9 @@ export const mockProducts: Product[] = [
     price: 3.99,
     category: 'cards',
     gradient: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)',
-    image: '/images/pocket_bill_of_rights.png'
+    image: '/images/pocket_bill_of_rights.png',
+    printfulVariantId: 1004,
+    inStock: true
   },
   {
     id: 'prod-005',
@@ -52,7 +63,9 @@ export const mockProducts: Product[] = [
     price: 14.99,
     category: 'decals',
     gradient: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #059669 100%)',
-    image: '/images/counter_stand_display.png'
+    image: '/images/counter_stand_display.png',
+    printfulVariantId: 1005,
+    inStock: true
   },
   {
     id: 'prod-006',
@@ -61,7 +74,10 @@ export const mockProducts: Product[] = [
     price: 24.99,
     category: 'apparel',
     gradient: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-    image: '/images/no_gravity_tee.png'
+    image: '/images/no_gravity_tee.png',
+    printfulVariantId: 1006,
+    sizes: ['S', 'M', 'L', 'XL', '2XL'],
+    inStock: true
   },
   {
     id: 'prod-007',
@@ -70,7 +86,10 @@ export const mockProducts: Product[] = [
     price: 44.99,
     category: 'apparel',
     gradient: 'linear-gradient(135deg, #334155 0%, #1e293b 100%)',
-    image: '/images/no_guilt_hoodie.png'
+    image: '/images/no_guilt_hoodie.png',
+    printfulVariantId: 1007,
+    sizes: ['S', 'M', 'L', 'XL', '2XL'],
+    inStock: true
   },
   {
     id: 'prod-008',
@@ -79,6 +98,8 @@ export const mockProducts: Product[] = [
     price: 7.99,
     category: 'decals',
     gradient: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
-    image: '/images/frictionless_bumper.png'
+    image: '/images/frictionless_bumper.png',
+    printfulVariantId: 1008,
+    inStock: true
   },
 ]
