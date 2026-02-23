@@ -36,9 +36,11 @@ export default function HallOfAbsurdity() {
       .from('testimonials')
       .select('*')
       .order('created_at', { ascending: false })
-      .then(({ data }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then(({ data }: { data: any[] | null }) => {
         if (data && data.length > 0) {
-          const live: Testimonial[] = data.map((row) => ({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const live: Testimonial[] = data.map((row: any) => ({
             id: row.id,
             story: row.story,
             category: row.category,

@@ -65,10 +65,10 @@ export default function RealTalkSection() {
                 </p>
               </div>
               <Link
-                to="/education"
+                to="/education#state-wages"
                 className="shrink-0 inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-slate-950 font-bold uppercase tracking-wider text-sm rounded-xl hover:bg-amber-400 transition-colors"
               >
-                Learn More
+                Check Your State
               </Link>
             </div>
           </div>

@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import SectionHeading from '../components/shared/SectionHeading'
 import ScrollReveal from '../components/shared/ScrollReveal'
@@ -14,6 +15,7 @@ import DannyMeyerCase from '../components/education/DannyMeyerCase'
 import TopicArticleGrid from '../components/education/TopicArticleGrid'
 import VideoResources from '../components/education/VideoResources'
 import AccordionFAQ from '../components/education/AccordionFAQ'
+import StateWageMap from '../components/education/StateWageMap'
 import { mockStatistics } from '../data/mockStatistics'
 
 const keyStats = mockStatistics.filter((s) =>
@@ -134,6 +136,17 @@ const educationFAQ = [
 ]
 
 function Education() {
+  const { hash } = useLocation()
+
+  useEffect(() => {
+    if (hash) {
+      const el = document.querySelector(hash)
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 300)
+      }
+    }
+  }, [hash])
+
   return (
     <div className="min-h-screen bg-slate-950">
       {/* Hero */}
@@ -202,6 +215,9 @@ function Education() {
           </div>
         </div>
       </section>
+
+      {/* State-by-state tipped wage data */}
+      <StateWageMap />
 
       {/* Service Quality — the 2-4% stat */}
       <ServiceQualityChart />
