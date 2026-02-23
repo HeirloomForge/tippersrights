@@ -83,24 +83,39 @@ npm run preview   # Preview production build
 **Project Name**: `tippersrights`
 **Domains**: tippersbillofrights.com, www.tippersbillofrights.com, tippersrights.pages.dev
 
-### Deploy Steps (in order):
+### Pre-Deploy Testing (MANDATORY before every deploy):
 
 ```bash
-# 1. Build (must pass before deploying)
+# 1. Build must pass (TypeScript + Vite)
 npm run build
 
-# 2. Deploy to Cloudflare Pages
+# 2. Smoke-test the production build locally
+npm run preview
+```
+
+Then verify in the local preview (localhost:4173):
+- **Homepage loads** — not a white page, no console errors
+- **Navigate to every major route** — `/billofrights`, `/directory`, `/education`, `/shop`, `/hall-of-absurdity`, `/movement`
+- **Check for runtime crashes** — especially from missing env vars, uninitialized services, or null references at module level
+- **Mobile viewport** — resize to 344px width (Galaxy Z Fold 5), check layout
+
+**Why this matters**: On 2026-02-23, a module-level `createClient()` call with undefined env vars crashed the entire app — white page, zero feedback. A `npm run build` pass does NOT catch runtime errors. You must verify the app actually renders.
+
+### Deploy Steps (after testing passes):
+
+```bash
 wrangler pages deploy dist --project-name tippersrights
 ```
 
 ### When to Deploy:
 - After committing fixes or features
 - After user requests deployment
-- **Never deploy without a passing build**
+- **Never deploy without passing pre-deploy testing**
 
 ### Post-Deploy Verification:
-- Check https://tippersbillofrights.com in browser
+- Check https://tippersbillofrights.com loads (hard refresh)
 - Verify on mobile viewport (Galaxy Z Fold 5 width ~344px)
+- Check browser console for errors
 
 ---
 
