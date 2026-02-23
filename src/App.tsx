@@ -11,6 +11,9 @@ import EmployeeSafeSpace from './pages/EmployeeSafeSpace'
 import Shop from './pages/Shop'
 import PaymentGuidelines from './pages/PaymentGuidelines'
 import Movement from './pages/Movement'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
+import Contact from './pages/Contact'
 
 function AppRoutes() {
   const location = useLocation()
@@ -28,6 +31,9 @@ function AppRoutes() {
         <Route path="/shop" element={<Shop />} />
         <Route path="/payment-guidelines" element={<PaymentGuidelines />} />
         <Route path="/movement" element={<Movement />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </PageTransition>
   )

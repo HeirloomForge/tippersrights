@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import SEO from '../components/shared/SEO'
 import SectionHeading from '../components/shared/SectionHeading.tsx'
 import ScrollReveal from '../components/shared/ScrollReveal.tsx'
 import MagneticButton from '../components/shared/MagneticButton.tsx'
@@ -8,6 +9,12 @@ import GuidelinesChecklist from '../components/payment/GuidelinesChecklist.tsx'
 function PaymentGuidelines() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <SEO
+        title="Payment Guidelines"
+        description="Fair and transparent tipping guidelines."
+        path="/payment-guidelines"
+      />
+
       {/* Header */}
       <ScrollReveal>
         <SectionHeading

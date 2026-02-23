@@ -1,4 +1,5 @@
 import ScrollReveal from '../components/shared/ScrollReveal'
+import SEO from '../components/shared/SEO'
 import HeroSection from '../components/hero/HeroSection'
 import LiveCounter from '../components/hero/LiveCounter'
 import FrictionlessBaseline from '../components/hero/FrictionlessBaseline'
@@ -6,9 +7,23 @@ import RealTalkSection from '../components/hero/RealTalkSection'
 import CTASection from '../components/hero/CTASection'
 import JoinMovement from '../components/movement/JoinMovement'
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: "Tipper's Bill of Rights",
+  url: 'https://tippersbillofrights.com',
+}
+
 export default function Landing() {
   return (
     <div>
+      <SEO
+        title="Fight Tipping Fatigue"
+        description="Join the movement against guilt-trip tipping. Sign the petition, find fair-wage businesses."
+        path="/"
+        jsonLd={websiteJsonLd}
+      />
+
       {/* Hero with iPad scroll-away + headline reveal + comparison cards */}
       <HeroSection />
 

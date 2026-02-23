@@ -1,4 +1,5 @@
 import ScrollReveal from '../components/shared/ScrollReveal'
+import SEO from '../components/shared/SEO'
 import SectionHeading from '../components/shared/SectionHeading'
 import MagneticButton from '../components/shared/MagneticButton'
 import JoinMovement from '../components/movement/JoinMovement'
@@ -7,6 +8,12 @@ import LegislationTimeline from '../components/movement/LegislationTimeline'
 export default function Movement() {
   return (
     <div className="bg-slate-950 min-h-screen">
+      <SEO
+        title="Join the Movement"
+        description="Sign the petition and become a Founding Signer."
+        path="/movement"
+      />
+
       {/* Join the Movement signup section */}
       <section className="px-4 pt-32 pb-20 md:pt-40 md:pb-28">
         <JoinMovement />

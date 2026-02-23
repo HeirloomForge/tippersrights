@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import SEO from '../components/shared/SEO'
 import SectionHeading from '../components/shared/SectionHeading.tsx'
 import ScrollReveal from '../components/shared/ScrollReveal.tsx'
 import MagneticButton from '../components/shared/MagneticButton.tsx'
@@ -8,6 +9,12 @@ import ProclamationSignup from '../components/certification/ProclamationSignup.t
 function Certification() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
+      <SEO
+        title="Get Certified"
+        description="Business owners: Get certified as a fair-wage establishment."
+        path="/certification"
+      />
+
       {/* Header */}
       <ScrollReveal>
         <SectionHeading

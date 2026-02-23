@@ -1,10 +1,17 @@
 import { motion } from 'framer-motion'
+import SEO from '../components/shared/SEO'
 import SectionHeading from '../components/shared/SectionHeading'
 import MagneticButton from '../components/shared/MagneticButton'
 
 function Shop() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24">
+      <SEO
+        title="The Arsenal"
+        description="Satirical merch that makes a statement about tipping culture."
+        path="/shop"
+      />
+
       <SectionHeading
         title="THE ARSENAL"
         subtitle="Arm yourself for the revolution against guilt-driven gratuity"

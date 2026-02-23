@@ -1,4 +1,5 @@
 import ScrollReveal from '../components/shared/ScrollReveal'
+import SEO from '../components/shared/SEO'
 import TypewriterText from '../components/bill/TypewriterText'
 import RightsArticle from '../components/bill/RightsArticle'
 import StickyActions from '../components/bill/StickyActions'
@@ -53,9 +54,28 @@ const ARTICLES = [
 const PREAMBLE =
   'We, the consumers of this nation, weary of manufactured guilt and digital coercion, do hereby establish these inalienable rights. Let it be known that the act of purchasing goods and services should not come bundled with moral judgment, algorithmic shame, or the silent expectation of subsidizing a broken labor system.'
 
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: "The Tipper's Bill of Rights",
+  description: 'Read the 11 articles that define your rights as a consumer.',
+  author: {
+    '@type': 'Organization',
+    name: "Tipper's Bill of Rights",
+  },
+}
+
 function BillOfRights() {
   return (
     <div className="relative min-h-screen bg-slate-950">
+      <SEO
+        title="The Tipper's Bill of Rights"
+        description="Read the 11 articles that define your rights as a consumer."
+        path="/billofrights"
+        ogType="article"
+        jsonLd={articleJsonLd}
+      />
+
       {/* Parchment texture overlay via CSS gradients */}
       <div
         className="pointer-events-none fixed inset-0 z-0"
@@ -68,7 +88,7 @@ function BillOfRights() {
         }}
       />
 
-      <div className="relative z-10 max-w-3xl mx-auto px-6 py-20 md:py-32">
+      <article className="relative z-10 max-w-3xl mx-auto px-6 py-20 md:py-32">
         {/* Header */}
         <ScrollReveal variant="fadeIn" duration={1}>
           <header className="text-center mb-16">
@@ -168,7 +188,7 @@ function BillOfRights() {
             </svg>
           </footer>
         </ScrollReveal>
-      </div>
+      </article>
 
       <StickyActions />
     </div>

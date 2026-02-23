@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import SEO from '../components/shared/SEO'
 import SectionHeading from '../components/shared/SectionHeading.tsx'
 import RadarSweep from '../components/directory/RadarSweep.tsx'
 import DirectorySearch from '../components/directory/DirectorySearch.tsx'
@@ -39,6 +40,12 @@ function Directory() {
 
   return (
     <>
+      <SEO
+        title="Certified Business Directory"
+        description="Find businesses that pay fair wages."
+        path="/directory"
+      />
+
       <RadarSweep />
 
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">

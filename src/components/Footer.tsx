@@ -15,11 +15,11 @@ const footerLinks = {
   Resources: [
     { to: '/education', label: 'Tipping History' },
     { to: '/payment-guidelines', label: 'Fair Payment Guide' },
+    { to: '/contact', label: 'Contact Us' },
   ],
-  Shop: [
-    { to: '/shop', label: 'The Arsenal' },
-    { to: '/shop', label: 'Business Cards' },
-    { to: '/shop', label: 'Window Decals' },
+  Legal: [
+    { to: '/privacy', label: 'Privacy Policy' },
+    { to: '/terms', label: 'Terms of Service' },
   ],
 }
 

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import SEO from '../components/shared/SEO'
 import ScrollReveal from '../components/shared/ScrollReveal'
 import SectionHeading from '../components/shared/SectionHeading'
 import TestimonialGrid from '../components/testimonials/TestimonialGrid'
@@ -59,6 +60,12 @@ export default function HallOfAbsurdity() {
 
   return (
     <div className="min-h-screen bg-slate-950">
+      <SEO
+        title="Hall of Absurdity"
+        description="Real stories of outrageous tipping situations."
+        path="/hall-of-absurdity"
+      />
+
       {/* Header */}
       <section className="pt-24 pb-12 px-6">
         <div className="max-w-5xl mx-auto">

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import SEO from '../components/shared/SEO'
 import { Link } from 'react-router-dom'
 import ScrollReveal from '../components/shared/ScrollReveal'
 import GlowCard from '../components/shared/GlowCard'
@@ -125,6 +126,12 @@ const resources = [
 function EmployeeSafeSpace() {
   return (
     <div className="min-h-screen bg-slate-950">
+      <SEO
+        title="Employee Safe Space"
+        description="Resources for service industry workers."
+        path="/employee-safe-space"
+      />
+
       {/* Hero - softer tone */}
       <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
         {/* Warm amber glow instead of cool emerald */}

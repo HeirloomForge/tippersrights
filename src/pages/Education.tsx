@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import SectionHeading from '../components/shared/SectionHeading'
 import ScrollReveal from '../components/shared/ScrollReveal'
 import MagneticButton from '../components/shared/MagneticButton'
+import SEO from '../components/shared/SEO'
 import DataCard from '../components/education/DataCard'
 import AnimatedBarChart from '../components/education/AnimatedBarChart'
 import InequalityExplainer from '../components/education/InequalityExplainer'
@@ -74,7 +75,7 @@ const educationFAQ = [
   {
     question: 'Don\'t some servers make great money from tips?',
     answer:
-      'A small percentage of servers at high-end establishments can earn well. But the median tipped worker earns around $15/hr including tips, and the system creates extreme income volatility based on shift timing, location, and — studies show — the worker\'s race and gender.',
+      'A small percentage of servers at high-end establishments can earn well. But the median tipped worker earns around $15/hr including tips, and the system creates extreme income volatility based on shift timing, location, and \u2014 studies show \u2014 the worker\'s race and gender.',
     sources: [
       { label: 'BLS Occupational Data', url: 'https://www.bls.gov/ooh/food-preparation-and-serving/waiters-and-waitresses.htm' },
       { label: 'Cornell Hospitality Research', url: 'https://sha.cornell.edu/faculty-research/faculty/wml3/' },
@@ -83,7 +84,7 @@ const educationFAQ = [
   {
     question: 'What is the "iPad guilt trip" effect?',
     answer:
-      'Research from Temple University found that pre-service tipping — being asked to tip before you even receive service — triggers negative emotions including discomfort, uncertainty, and social pressure. It is fundamentally different from voluntarily rewarding service after the fact, and is one reason consumers increasingly feel tipping is "out of control."',
+      'Research from Temple University found that pre-service tipping \u2014 being asked to tip before you even receive service \u2014 triggers negative emotions including discomfort, uncertainty, and social pressure. It is fundamentally different from voluntarily rewarding service after the fact, and is one reason consumers increasingly feel tipping is "out of control."',
     sources: [
       { label: 'Temple University, 2025', url: 'https://research.temple.edu/news/2025/08/reward-requirement-new-tipping-culture' },
       { label: 'HBR / Bankrate', url: 'https://hbr.org/2026/01/when-tipping-becomes-a-customer-experience-problem' },
@@ -127,13 +128,26 @@ const educationFAQ = [
   {
     question: 'Are there legal challenges to the tipping system?',
     answer:
-      'Several legal challenges have been attempted but largely unsuccessful. In Brown v. Meyer, a case challenging tipping practices, the suit was dismissed. The DOL tip credit provision has been upheld repeatedly. The strongest path to change appears to be state-level legislation — 7 states now require full minimum wage before tips (Alaska, California, Minnesota, Montana, Nevada, Oregon, Washington).',
+      'Several legal challenges have been attempted but largely unsuccessful. In Brown v. Meyer, a case challenging tipping practices, the suit was dismissed. The DOL tip credit provision has been upheld repeatedly. The strongest path to change appears to be state-level legislation \u2014 7 states now require full minimum wage before tips (Alaska, California, Minnesota, Montana, Nevada, Oregon, Washington).',
     sources: [
       { label: 'Dept. of Labor: Tipped Wages', url: 'https://www.dol.gov/agencies/whd/state/minimum-wage/tipped' },
       { label: 'One Fair Wage / Food Tank', url: 'https://foodtank.com/news/2024/01/one-fair-wages-fight-to-end-subminimum-wages-is-gaining-momentum/' },
     ],
   },
 ]
+
+const faqPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: educationFAQ.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+}
 
 function Education() {
   const { hash } = useLocation()
@@ -149,6 +163,13 @@ function Education() {
 
   return (
     <div className="min-h-screen bg-slate-950">
+      <SEO
+        title="Tipping Education Center"
+        description="Learn the truth about tipping culture in America."
+        path="/education"
+        jsonLd={faqPageJsonLd}
+      />
+
       {/* Hero */}
       <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
         {/* Background glow */}
