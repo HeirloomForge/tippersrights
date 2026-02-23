@@ -1,5 +1,7 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import type { Product } from '../data/mockProducts'
+
+const STORAGE_KEY = 'tbor-cart'
 
 export interface CartItem {
   product: Product
@@ -22,8 +24,35 @@ function cartKey(productId: string, size?: string): string {
   return size ? `${productId}:${size}` : productId
 }
 
+/** Load cart from localStorage, return empty array on failure */
+function loadCart(): CartItem[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (!stored) return []
+    const parsed = JSON.parse(stored)
+    if (!Array.isArray(parsed)) return []
+    return parsed
+  } catch {
+    return []
+  }
+}
+
+/** Save cart to localStorage */
+function saveCart(cart: CartItem[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cart))
+  } catch {
+    // localStorage full or unavailable — silently fail
+  }
+}
+
 export default function useCart(): CartActions {
-  const [cart, setCart] = useState<CartItem[]>([])
+  const [cart, setCart] = useState<CartItem[]>(loadCart)
+
+  // Persist cart changes to localStorage
+  useEffect(() => {
+    saveCart(cart)
+  }, [cart])
 
   const addItem = useCallback((product: Product, size?: string) => {
     setCart((prev) => {
@@ -71,6 +100,11 @@ export default function useCart(): CartActions {
 
   const clearCart = useCallback(() => {
     setCart([])
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch {
+      // Silently fail
+    }
   }, [])
 
   const totalItems = useMemo(
