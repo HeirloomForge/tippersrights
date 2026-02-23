@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react'
 import SectionHeading from '../components/shared/SectionHeading.tsx'
-import ScrollReveal from '../components/shared/ScrollReveal.tsx'
 import RadarSweep from '../components/directory/RadarSweep.tsx'
 import DirectorySearch from '../components/directory/DirectorySearch.tsx'
 import DirectoryMap from '../components/directory/DirectoryMap.tsx'
@@ -43,14 +42,11 @@ function Directory() {
       <RadarSweep />
 
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        {/* Header */}
-        <ScrollReveal>
-          <SectionHeading
-            title="THE SAFE ZONE"
-            subtitle="Find businesses that do it right. No guilt screens, no forced generosity — just fair prices and fair wages."
-            useScatter
-          />
-        </ScrollReveal>
+        {/* Header — no ScrollReveal here to prevent re-animation flash during search */}
+        <SectionHeading
+          title="THE SAFE ZONE"
+          subtitle="Find businesses that do it right. No guilt screens, no forced generosity — just fair prices and fair wages."
+        />
 
         {/* Search */}
         <div className="mt-12">
