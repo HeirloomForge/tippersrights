@@ -27,6 +27,11 @@ export default function DirectoryMap({
 }: DirectoryMapProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
+  // Precompute pulse delays once per business list via state initializer (avoids impure render call)
+  const [pulseDelays] = useState<Record<string, number>>(() =>
+    Object.fromEntries(businesses.map((biz) => [biz.id, Math.random() * 2])),
+  )
+
   return (
     <div className="relative h-80 w-full overflow-hidden rounded-xl border border-white/10 bg-slate-950 lg:h-full lg:min-h-[500px]">
       {/* Grid street lines */}
@@ -67,7 +72,7 @@ export default function DirectoryMap({
             <motion.div
               className="absolute -left-3 -top-3 h-6 w-6 rounded-full bg-emerald-500/20"
               animate={{ scale: [1, 1.8, 1], opacity: [0.5, 0, 0.5] }}
-              transition={{ duration: 2.5, repeat: Infinity, delay: Math.random() * 2 }}
+              transition={{ duration: 2.5, repeat: Infinity, delay: pulseDelays[biz.id] }}
             />
             {/* Pin dot */}
             <button

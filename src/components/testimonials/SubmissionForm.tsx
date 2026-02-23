@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { supabase } from '../../lib/supabase'
 import GlowCard from '../shared/GlowCard'
 import MagneticButton from '../shared/MagneticButton'
 
@@ -92,22 +91,13 @@ export default function SubmissionForm() {
   async function handleSubmit() {
     if (!validate()) return
 
-    if (!supabase) {
-      setErrors({ story: 'Submissions are not available yet. Check back soon!' })
-      return
-    }
-
-    const { error } = await supabase.from('testimonials').insert({
+    // Wave 2 will wire this to POST /api/stories/submit
+    console.log('Story submission (mock):', {
       story: form.story.trim(),
       category: form.category,
       tip_requested: form.tipAmount.trim(),
       location: form.location.trim(),
     })
-
-    if (error) {
-      setErrors({ story: 'Something went wrong. Please try again.' })
-      return
-    }
 
     setParticles(generateParticles())
     setSubmitted(true)

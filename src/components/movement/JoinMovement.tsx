@@ -16,7 +16,7 @@ export default function JoinMovement() {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    // Mock submission — Supabase integration placeholder
+    // Wave 2 will wire this to POST /api/petition/sign
     setSubmitted(true)
   }
 

@@ -1,10 +1,9 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import SEO from '../components/shared/SEO'
 import ScrollReveal from '../components/shared/ScrollReveal'
 import SectionHeading from '../components/shared/SectionHeading'
 import TestimonialGrid from '../components/testimonials/TestimonialGrid'
 import SubmissionForm from '../components/testimonials/SubmissionForm'
-import { supabase } from '../lib/supabase'
 import { mockTestimonials, type Testimonial } from '../data/mockTestimonials'
 
 function computeStats(testimonials: Testimonial[]) {
@@ -30,31 +29,8 @@ function computeStats(testimonials: Testimonial[]) {
 }
 
 export default function HallOfAbsurdity() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(mockTestimonials)
-
-  useEffect(() => {
-    if (!supabase) return
-    supabase
-      .from('testimonials')
-      .select('*')
-      .order('created_at', { ascending: false })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then(({ data }: { data: any[] | null }) => {
-        if (data && data.length > 0) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const live: Testimonial[] = data.map((row: any) => ({
-            id: row.id,
-            story: row.story,
-            category: row.category,
-            tipRequested: row.tip_requested,
-            location: row.location ?? '',
-            upvotes: row.upvotes ?? 0,
-            date: row.created_at?.slice(0, 10) ?? '',
-          }))
-          setTestimonials([...live, ...mockTestimonials])
-        }
-      })
-  }, [])
+  // Wave 2 will replace this with live data from GET /api/stories
+  const testimonials = mockTestimonials
 
   const stats = useMemo(() => computeStats(testimonials), [testimonials])
 

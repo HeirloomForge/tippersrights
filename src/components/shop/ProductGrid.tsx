@@ -23,7 +23,7 @@ export default function ProductGrid({ onAddToCart }: ProductGridProps) {
   const [sortOrder, setSortOrder] = useState<SortOrder>('default')
 
   const filteredProducts = useMemo(() => {
-    let products =
+    const products =
       activeCategory === 'all'
         ? [...mockProducts]
         : mockProducts.filter((p) => p.category === activeCategory)

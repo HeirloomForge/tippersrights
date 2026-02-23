@@ -45,6 +45,8 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
+    // Close mobile menu on route change — intentional setState in effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileOpen(false)
   }, [location.pathname])
 
